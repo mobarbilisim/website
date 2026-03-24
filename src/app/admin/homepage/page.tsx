@@ -157,8 +157,8 @@ export default function HomepageAdminPage() {
       setStatusMessage("Fotoğraf yükleniyor...");
       
       const fileExt = file.name.split('.').pop();
-      const fileName = \`\${Math.random()}.\${fileExt}\`;
-      const filePath = \`slider/\${fileName}\`;
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `slider/${fileName}`;
 
       const { error: uploadError, data } = await supabase.storage
         .from('images')
