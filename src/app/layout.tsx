@@ -12,7 +12,30 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Mobar Bilişim | Kurumsal Teknoloji & 2. El Çözümler",
-  description: "Sıfır ve 2. el Teknoloji ürünleri, Profesyonel Özel Yazılım Çözümleri",
+  description: "Sıfır ve 2. el garantili teknoloji ürünleri, profesyonel özel yazılım çözümleri ve kurumunuza özel altyapı hizmetleri.",
+  keywords: ["bilgisayar", "2. el teknoloji", "kurumsal bilişim", "özel yazılım", "teknik servis", "mobar"],
+  openGraph: {
+    title: "Mobar Bilişim | Teknoloji Çözümleri",
+    description: "Sıfır ve 2. el garantili teknoloji ürünleri, özel yazılım.",
+    url: "https://mobarbilisim.com",
+    siteName: "Mobar Bilişim",
+    images: [
+      {
+        url: "/MOBAR.png",
+        width: 1200,
+        height: 630,
+        alt: "Mobar Bilişim",
+      },
+    ],
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mobar Bilişim",
+    description: "Kurumsal ve bireysel teknoloji çözümleri.",
+    images: ["/MOBAR.png"],
+  },
 };
 
 export default function RootLayout({

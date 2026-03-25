@@ -91,15 +91,15 @@
 - [x] **Supabase Auth Entegrasyonu:** Admin paneline giriş/şifre koruması ekle (şu an herkes `/admin` adresine girebilir)
 - [x] **Ürün Görseli Yükleme:** Mağaza ürünlerine de fotoğraf yükleme özelliği ekle (Admin > Ürünler)
 - [x] **Sipariş Sistemi:** Sepete ekleme → Ödeme akışı → Sipariş kaydı (Siparişler admin panelinden yönetiliyor)
-- [ ] **Mobil Menü (Hamburger):** Küçük ekranlarda açılır kapanır menü
+- [x] **Mobil Menü (Hamburger):** Küçük ekranlarda açılır kapanır menü
 
 ### 🟡 Orta Öncelik
-- [ ] **İletişim Sayfası (`/iletisim`):** İletişim formu, Google Maps, WhatsApp bağlantısı
-- [ ] **Hakkımızda Sayfası (`/hakkimizda`):** Firma bilgileri, vizyon, misyon
-- [ ] **Ürün Detay Sayfası (`/store/[id]`):** Tek ürün görüntüleme, galeri, teknik özellikler
-- [ ] **Arama Fonksiyonu:** Ürünler arasında anlık arama
-- [ ] **Admin panelinde gerçek istatistikler:** Toplam ürün, sipariş, gelir vb. dinamik veriler
-- [ ] **SEO Optimizasyonu:** Her sayfaya özel meta etiketleri, Open Graph görselleri
+- [x] **İletişim Sayfası (`/iletisim`):** İletişim formu, Google Maps, WhatsApp bağlantısı
+- [x] **Hakkımızda Sayfası (`/hakkimizda`):** Firma bilgileri, vizyon, misyon
+- [x] **Ürün Detay Sayfası (`/store/[id]`):** Tek ürün görüntüleme, galeri, teknik özellikler
+- [x] **Arama Fonksiyonu:** Ürünler arasında anlık arama
+- [x] **Admin panelinde gerçek istatistikler:** Toplam ürün, sipariş, gelir vb. dinamik veriler
+- [x] **SEO Optimizasyonu:** Her sayfaya özel meta etiketleri, Open Graph görselleri
 
 ### 🟢 Düşük Öncelik (Gelecekte)
 - [ ] **Kullanıcı Kayıt/Giriş:** Müşterilerin hesap açıp siparişlerini takip etmesi

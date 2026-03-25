@@ -6,11 +6,21 @@ import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/components/providers/CartProvider";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { totalItems, totalPrice } = useCart();
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if(searchQuery.trim()) {
+      router.push(`/store?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,16 +59,18 @@ export default function Header() {
             </Link>
 
             {/* Desktop Search Bar */}
-            <div className="hidden md:flex flex-1 max-w-2xl relative">
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl relative">
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Aramak istediğiniz ürünü yazın..." 
                 className="w-full pl-5 pr-12 py-3 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-0 outline-none transition-colors text-sm"
               />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition">
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition">
                 <Search size={18} />
               </button>
-            </div>
+            </form>
 
             {/* Right Actions */}
             <div className="hidden md:flex items-center gap-6">
@@ -120,14 +132,18 @@ export default function Header() {
         
         {/* Mobile Search Bar (Shows below header on mobile) */}
         <div className="md:hidden px-4 pb-4">
-          <div className="relative w-full">
+          <form onSubmit={handleSearch} className="relative w-full">
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Ara..." 
               className="w-full pl-4 pr-10 py-2.5 rounded-full border border-gray-200 bg-gray-50 focus:border-blue-500 focus:bg-white outline-none transition-colors text-sm"
             />
-            <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          </div>
+            <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <Search size={18} />
+            </button>
+          </form>
         </div>
       </div>
 
