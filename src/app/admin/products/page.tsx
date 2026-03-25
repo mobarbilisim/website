@@ -14,6 +14,7 @@ export default function AdminProductsPage() {
   // Form state
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("1");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [condition, setCondition] = useState("2.El");
@@ -78,7 +79,7 @@ export default function AdminProductsPage() {
         description, 
         category_id: parseInt(categoryId), 
         condition, 
-        stock: 1,
+        stock: parseInt(stock),
         image_url: imageUrl
       }
     ]);
@@ -87,6 +88,7 @@ export default function AdminProductsPage() {
       setIsAdding(false);
       setTitle("");
       setPrice("");
+      setStock("1");
       setDescription("");
       setImageUrl("");
       fetchData(); // Listeyi güncelle
@@ -166,6 +168,11 @@ export default function AdminProductsPage() {
               </select>
             </div>
 
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-400">Stok (Adet)</label>
+              <input type="number" min="0" required value={stock} onChange={(e) => setStock(e.target.value)} className="w-full px-4 py-3 bg-background border border-white/10 rounded-xl focus:border-blue-500 outline-none" placeholder="10" />
+            </div>
+
             <div className="space-y-4 md:col-span-2">
               <label className="block text-sm font-medium text-gray-400">Kategori</label>
               <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="w-full px-4 py-3 bg-background border border-white/10 rounded-xl focus:border-blue-500 outline-none">
@@ -197,6 +204,7 @@ export default function AdminProductsPage() {
                 <th className="pb-3 font-medium">Ürün Adı ID</th>
                 <th className="pb-3 font-medium">Kategori</th>
                 <th className="pb-3 font-medium">Durum</th>
+                <th className="pb-3 font-medium">Stok</th>
                 <th className="pb-3 font-medium">Fiyat (TL)</th>
                 <th className="pb-3 font-medium text-right">İşlem</th>
               </tr>
@@ -225,6 +233,13 @@ export default function AdminProductsPage() {
                       <span className={`px-3 py-1 bg-opacity-10 rounded-full font-medium ${item.condition === 'Sıfır' ? 'bg-purple-500 text-purple-400' : 'bg-orange-500 text-orange-400'}`}>
                         {item.condition}
                       </span>
+                    </td>
+                    <td className="py-4 font-semibold text-foreground">
+                      {item.stock > 0 ? (
+                        <span className="text-emerald-400">{item.stock} Adet</span>
+                      ) : (
+                        <span className="text-red-400">Tükendi</span>
+                      )}
                     </td>
                     <td className="py-4 font-semibold text-foreground">₺{item.price.toLocaleString('tr-TR')}</td>
                     <td className="py-4 text-right">

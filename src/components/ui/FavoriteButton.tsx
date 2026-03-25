@@ -2,13 +2,26 @@
 
 import { useFavorites } from "@/components/providers/FavoriteProvider";
 import { Heart } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function FavoriteButton({ product }: { product: any }) {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const favState = isFavorite(product.id);
+  const supabase = createClient();
+  const router = useRouter();
 
-  const toggleFavorite = (e: React.MouseEvent) => {
+  const toggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent triggering parent Link click
+    
+    // Check if user logged in
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) {
+      alert("Favorilere eklemek için önce giriş yapmalısınız.");
+      router.push("/giris");
+      return;
+    }
+
     if (favState) {
       removeFavorite(product.id);
     } else {

@@ -21,34 +21,37 @@ export default function Home() {
   // Default veri (Supabase hata verirse veya tablo yoksa fallback)
   const defaultSlides = [
     {
-      title: "2.EL KURUMSAL BİLGİSAYARLAR",
-      subtitle: "Fırsat Ürünleri",
-      desc: "Kurumsal Performans, Uygun Maliyet. Tüm testleri yapılmış, 3 ay garantili ürünleri hemen inceleyin.",
-      bg: "from-slate-800 to-slate-900",
-      accent: "text-blue-400",
-      btnText: "Hemen İncele",
-      Icon1: Server,
-      Icon2: Monitor,
-    },
-    {
-      title: "SIFIR OYUNCU KASALARI",
-      subtitle: "Yeni Nesil",
-      desc: "Oyunlarda en yüksek performansı alın. Garantili sıfır sistemlerle kesintisiz gücü hissedin.",
-      bg: "from-indigo-900 to-purple-900",
-      accent: "text-purple-400",
-      btnText: "Sistemleri Gör",
-      Icon1: Server,
-      Icon2: Cpu,
-    },
-    {
       title: "ÖZEL YAZILIM ÇÖZÜMLERİ",
-      subtitle: "Kurumsal",
-      desc: "İşletmenize özel web yazılımları, uygulamalar ve uçtan uca dijital çözümler üretiyoruz.",
-      bg: "from-emerald-900 to-teal-900",
+      subtitle: "Kurumsal & Dijital",
+      desc: "Modern web siteleri, e-ticaret platformları ve kurumsal yazılım çözümleri. Hızlı teslimat, profesyonel destek.",
+      bg: "from-emerald-900 via-teal-900 to-slate-900",
       accent: "text-emerald-400",
-      btnText: "Bize Ulaşın",
-      Icon1: Code,
-      Icon2: Laptop,
+      btnText: "Hemen Keşfedin",
+      btnLink: "/category/yazilim-cozumleri",
+      Icon1: "Code",
+      Icon2: "Laptop"
+    },
+    {
+      title: "SIFIR GARANTİLİ CIHAZLAR",
+      subtitle: "Sıfır Kapalı Kutu",
+      desc: "Tam garanti süresiyle sıfır bilgisayar ve bileşen ürünleri. Hemen kargola, güvenle al.",
+      bg: "from-blue-900 via-indigo-900 to-slate-900",
+      accent: "text-blue-400",
+      btnText: "Sıfır Ürünleri Gör",
+      btnLink: "/sifir-urunler",
+      Icon1: "Server",
+      Icon2: "Cpu"
+    },
+    {
+      title: "2. EL GARANTİLİ BİLGİSAYARLAR",
+      subtitle: "Fiyrsatları Kaçırma",
+      desc: "Kurumsal performans, uygun maliyet. Tüm testleri yapılmış, 3 ay Mobar garantili ürünleri hemen inceleyin.",
+      bg: "from-slate-800 via-slate-900 to-gray-900",
+      accent: "text-orange-400",
+      btnText: "Fırsatları Gör",
+      btnLink: "/ikinci-el-urunler",
+      Icon1: "Server",
+      Icon2: "Monitor"
     }
   ];
 
@@ -136,44 +139,57 @@ export default function Home() {
     <div className="bg-gray-50 pb-20">
       {/* Hero Banner Section */}
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div 
-          className={`relative w-full h-[400px] md:h-[500px] bg-gradient-to-r ${activeSlide.bg} rounded-2xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000`}
+        <Link 
+          href={activeSlide.btnLink || "/store"}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}
+          className={`relative w-full h-[450px] md:h-[550px] bg-gradient-to-br ${activeSlide.bg} rounded-3xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000 border border-white/10 cursor-pointer block`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           {/* Abstract particles/glow */}
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 blur-[100px] pointer-events-none"></div>
+          <div className="absolute top-0 right-1/4 w-1/2 h-full bg-white/10 blur-[120px] pointer-events-none rounded-full"></div>
+          <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-500/20 blur-[100px] pointer-events-none rounded-full"></div>
           
-          <div className="relative z-10 px-8 md:px-16 md:w-2/3">
+          <div className="relative z-10 px-8 md:px-16 w-full md:w-3/5">
             <motion.div 
               key={currentSlide} 
-              initial={{ opacity: 0, x: -30 }} 
-              animate={{ opacity: 1, x: 0 }} 
-              transition={{ duration: 0.7 }}
+              initial={{ opacity: 0, y: 30 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold text-xs uppercase tracking-widest rounded-full mb-4">
+              <div className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full mb-6 shadow-sm">
                 {activeSlide.subtitle}
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] mb-6 drop-shadow-2xl tracking-tight">
                 {activeSlide.title.split(' ').slice(0, 2).join(' ')} <br />
-                <span className={activeSlide.accent}>{activeSlide.title.split(' ').slice(2).join(' ')}</span>
+                <span className={`bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 ${activeSlide.accent}`}>{activeSlide.title.split(' ').slice(2).join(' ')}</span>
               </h1>
-              <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-lg">
+              <p className="text-lg md:text-xl text-blue-50/80 mb-10 max-w-lg font-medium leading-relaxed drop-shadow-md">
                 {activeSlide.desc}
               </p>
-              <Link href={activeSlide.btnLink || "/store"} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all">
-                {activeSlide.btnText} <ArrowRight size={20} />
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link href={activeSlide.btnLink || "/store"} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="inline-flex items-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  {activeSlide.btnText} <ArrowRight size={20} className="text-blue-600" />
+                </Link>
+                <div className="hidden sm:flex text-white/50 text-sm font-semibold tracking-wider uppercase ml-4 items-center gap-2">
+                  <span className="w-8 h-px bg-white/30 hidden md:block"></span> 
+                  KEŞFET
+                </div>
+              </div>
             </motion.div>
           </div>
           
           {/* Decorative/Image Placeholder on the Right */}
-          <div className="hidden md:flex absolute right-10 top-1/2 -translate-y-1/2 justify-center items-center drop-shadow-2xl">
-              <motion.div key={`bg-${currentSlide}`} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }}>
+          <div className="hidden md:flex absolute right-0 top-0 h-full w-2/5 justify-end items-center drop-shadow-2xl overflow-hidden mask-image-gradient-left pr-10">
+              <motion.div 
+                key={`bg-${currentSlide}`} 
+                initial={{ opacity: 0, scale: 0.8, x: 50 }} 
+                animate={{ opacity: 1, scale: 1, x: 0 }} 
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="relative z-10 flex items-center justify-center w-full h-full"
+              >
                 {activeSlide.image_url ? (
-                  <div className="relative w-64 h-64 md:w-80 md:h-80 z-10 flex items-center justify-center">
-                    <Image src={activeSlide.image_url} alt="Slider Image" width={320} height={320} className="object-contain max-h-full drop-shadow-2xl" />
-                  </div>
+                  <Image src={activeSlide.image_url} alt="Slider Image" fill className="object-contain max-h-[90%] drop-shadow-2xl p-4 scale-110" />
                 ) : (
                   <>
                     {(() => {
@@ -181,8 +197,8 @@ export default function Home() {
                       const Icon2 = activeSlide.Icon2 ? getIcon(activeSlide.Icon2) : getIcon("Monitor");
                       return (
                         <>
-                          <Icon1 size={250} className="text-slate-700/50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                          <Icon2 size={160} className="text-white z-10 relative" />
+                          <Icon1 size={400} className="text-white/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-12 blur-sm" />
+                          <Icon2 size={240} className="text-white z-10 relative drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]" />
                         </>
                       )
                     })()}
@@ -194,15 +210,15 @@ export default function Home() {
           {/* Slider Controls */}
           <button 
             onClick={() => setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-20 cursor-pointer"
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-4 transition-all z-20 cursor-pointer shadow-xl"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={28} />
           </button>
           <button 
             onClick={() => setCurrentSlide((prev) => (prev + 1) % activeSlides.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-20 cursor-pointer"
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all z-20 cursor-pointer shadow-xl"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={28} />
           </button>
 
           {/* Slider Dots */}
@@ -211,11 +227,18 @@ export default function Home() {
               <div 
                 key={i} 
                 onClick={() => setCurrentSlide(i)}
-                className={`h-2 rounded-full cursor-pointer transition-all ${i === currentSlide ? "bg-white w-6" : "bg-white/40 w-2 hover:bg-white/70"}`}
+                className={`h-1.5 rounded-full cursor-pointer transition-all duration-300 ${i === currentSlide ? "bg-white w-10 shadow-[0_0_10px_rgba(255,255,255,0.8)]" : "bg-white/30 w-3 hover:bg-white/60"}`}
               ></div>
             ))}
           </div>
-        </div>
+          {/* Progress Bar */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
+            <div 
+              className="h-full bg-white/50 transition-all duration-300" 
+              style={{ width: `${((currentSlide + 1) / activeSlides.length) * 100}%` }}
+            ></div>
+          </div>
+        </Link>
       </section>
 
       {/* Modern Card Categories (Mimicking the reference design) */}
@@ -228,34 +251,59 @@ export default function Home() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {activeCards.map((card, idx) => {
-              const CardIcon = getIcon(card.icon, "Monitor");
-              return (
-                <motion.div key={idx} variants={itemVariants} className={`bg-gradient-to-br ${card.bg} rounded-3xl text-white shadow-xl overflow-hidden relative group hover:-translate-y-2 transition-transform duration-300 min-h-[220px] flex items-stretch`}>
-                  
-                  {/* Left Content */}
-                  <div className="p-6 md:p-8 flex flex-col z-10 w-full sm:w-3/5">
-                    <h3 className="text-xl md:text-2xl font-black uppercase mb-3 leading-tight tracking-wide drop-shadow-md" dangerouslySetInnerHTML={{ __html: card.title }}></h3>
-                    <ul className="text-sm font-medium text-white/90 mb-8 space-y-1.5 flex-1">
-                      {card.features.map((feat: string, fIdx: number) => (
-                        <li key={fIdx} className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white/70"></span> {feat.replace("•", "").trim()}</li>
-                      ))}
-                    </ul>
-                    <Link href={card.btnLink} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="w-max bg-white text-gray-900 hover:bg-gray-100 px-5 py-2.5 rounded-xl text-sm font-extrabold shadow-lg transition-colors inline-flex items-center gap-2">
-                      {card.btnText} <ChevronRight size={18} />
-                    </Link>
+            const CardIcon = getIcon(card.icon, "Monitor");
+            return (
+              <motion.div key={idx} variants={itemVariants}>
+                <Link
+                  href={card.btnLink || "/store"}
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}
+                  className={`group relative flex flex-col justify-between h-full min-h-[280px] rounded-3xl overflow-hidden shadow-2xl text-white cursor-pointer block bg-gradient-to-br ${card.bg} border border-white/[0.08] hover:-translate-y-2 transition-transform duration-300`}
+                >
+                  {/* Background Icon (decorative) */}
+                  <div className="absolute -right-8 -bottom-8 opacity-[0.07] group-hover:opacity-[0.14] group-hover:scale-110 transition-all duration-500">
+                    <CardIcon size={200} strokeWidth={0.8} />
                   </div>
 
-                  {/* Right Image/Icon Cover */}
-                  <div className="hidden sm:flex absolute right-0 top-0 h-full w-2/5 justify-end items-end p-4 overflow-hidden mask-image-gradient">
-                    {card.image_url ? (
-                      <Image src={card.image_url} alt="Card Image" fill className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
-                    ) : (
-                      <CardIcon size={160} strokeWidth={1} className="text-white/20 group-hover:text-white/40 group-hover:scale-125 transition-transform duration-500 origin-bottom-right drop-shadow-2xl translate-x-10 translate-y-10" />
-                    )}
+                  {/* Glow */}
+                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+
+                  {/* Card Image */}
+                  {card.image_url && (
+                    <div className="absolute inset-0">
+                      <Image src={card.image_url} alt={card.title} fill className="object-cover opacity-20 group-hover:opacity-30 transition-all duration-500 scale-105 group-hover:scale-110" />
+                    </div>
+                  )}
+
+                  <div className="relative z-10 p-7 md:p-8 flex flex-col h-full">
+                    {/* Tag */}
+                    <div className="inline-flex items-center gap-2 self-start bg-white/10 backdrop-blur-sm border border-white/20 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5">
+                      <CardIcon size={12} />
+                      {card.features?.[0]?.replace('•','').trim()}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-2xl md:text-3xl font-black uppercase leading-tight mb-4 drop-shadow-xl tracking-tight" dangerouslySetInnerHTML={{ __html: card.title }}></h3>
+
+                    {/* Features */}
+                    <ul className="space-y-2 flex-1 mb-6">
+                      {card.features?.slice(1).map((feat: string, fIdx: number) => (
+                        <li key={fIdx} className="flex items-center gap-2 text-sm text-white/80 font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/60 shrink-0"></span>
+                          {feat.replace('•','').trim()}
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* CTA */}
+                    <div className="flex items-center gap-3 border-t border-white/10 pt-5 mt-auto">
+                      <span className="text-sm font-extrabold tracking-wide">{card.btnText}</span>
+                      <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform duration-300" />
+                    </div>
                   </div>
-                </motion.div>
-              );
-            })}
+                </Link>
+              </motion.div>
+            );
+          })}
           </motion.div>
       </section>
 
