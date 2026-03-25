@@ -107,8 +107,8 @@
 - [ ] **Bildirim Sistemi:** Yeni sipariş geldiğinde admin'e bildirim
 - [ ] **Blog/Haber Sayfası:** Teknoloji haberleri ve rehberler
 - [ ] **Çoklu Dil Desteği:** Türkçe / İngilizce
-- [ ] **PWA (Progressive Web App):** Mobilde uygulama gibi çalışma
-- [ ] **Google Analytics:** Ziyaretçi takibi
+- [x] **PWA (Progressive Web App):** Mobilde uygulama gibi çalışma eklendi
+- [x] **Google Analytics:** Ziyaretçi takibi (GA ID bekleniyor)
 
 ---
 
