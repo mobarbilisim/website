@@ -181,33 +181,39 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="absolute top-100 left-0 w-full h-[calc(100vh-80px)] bg-white z-40 flex flex-col p-4 overflow-y-auto border-t md:hidden shadow-xl">
-          <div className="flex items-center gap-4 mb-8 bg-blue-50 p-4 rounded-xl">
-            <User size={24} className="text-blue-600" />
-            <div className="flex flex-col">
-              <Link href="/login" className="font-bold text-gray-900" onClick={() => setIsMobileMenuOpen(false)}>Giriş Yap / Üye Ol</Link>
+        <>
+          <div 
+            className="fixed inset-0 top-[120px] bg-black/40 z-40 md:hidden backdrop-blur-sm" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="absolute top-full left-0 w-full bg-white z-50 flex flex-col p-4 border-t md:hidden shadow-xl max-h-[calc(100vh-120px)] overflow-y-auto">
+            <div className="flex items-center gap-4 mb-8 bg-blue-50 p-4 rounded-xl">
+              <User size={24} className="text-blue-600" />
+              <div className="flex flex-col">
+                <Link href="/giris" className="font-bold text-gray-900" onClick={() => setIsMobileMenuOpen(false)}>Giriş Yap / Üye Ol</Link>
+              </div>
             </div>
+            
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Kategoriler</h3>
+            <ul className="space-y-1">
+              {topCategories.map((category, idx) => {
+                const Icon = category.icon;
+                return (
+                  <li key={idx}>
+                    <Link 
+                      href={category.href} 
+                      onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+                      className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 text-gray-800 font-medium"
+                    >
+                      <Icon size={20} className="text-gray-500" />
+                      {category.name}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
           </div>
-          
-          <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Kategoriler</h3>
-          <ul className="space-y-1">
-            {topCategories.map((category, idx) => {
-              const Icon = category.icon;
-              return (
-                <li key={idx}>
-                  <Link 
-                    href={category.href} 
-                    onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
-                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 text-gray-800 font-medium"
-                  >
-                    <Icon size={20} className="text-gray-500" />
-                    {category.name}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        </>
       )}
     </header>
   );

@@ -166,7 +166,7 @@ export default function Home() {
               <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-lg">
                 {activeSlide.desc}
               </p>
-              <Link href={activeSlide.btnLink || "/store"} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all">
+              <Link href={activeSlide.btnLink || "/store"} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-blue-500/30 transition-all">
                 {activeSlide.btnText} <ArrowRight size={20} />
               </Link>
             </motion.div>
@@ -243,7 +243,7 @@ export default function Home() {
                     <li key={fIdx}>{feat}</li>
                   ))}
                 </ul>
-                <Link href={card.btnLink} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-bold border border-white/20 transition-colors inline-flex items-center gap-2 mt-auto">
+                <Link href={card.btnLink} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-bold border border-white/20 transition-colors inline-flex items-center gap-2 mt-auto">
                   {card.btnText} <ChevronRight size={16} />
                 </Link>
               </motion.div>
