@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Save, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Plus, Trash2, Image as ImageIcon, MapPin, Phone, Mail } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function GlobalSettingsPage() {
   const [siteName, setSiteName] = useState("MOBARBİLİŞİM");
@@ -14,6 +15,43 @@ export default function GlobalSettingsPage() {
     { id: 3, name: "Yazılım Çözümleri", icon: "Code" },
     { id: 4, name: "Bileşenler", icon: "Cpu" },
   ]);
+
+  const supabase = createClient();
+  const [footerSettings, setFooterSettings] = useState({
+    address: "",
+    phone: "",
+    email: "",
+    facebook: "",
+    twitter: "",
+    instagram: "",
+  });
+  const [isSavingFooter, setIsSavingFooter] = useState(false);
+
+  useEffect(() => {
+    async function loadFooter() {
+       const { data } = await supabase.from('site_settings').select('value').eq('key', 'footer_settings').single();
+       if(data?.value) {
+         setFooterSettings(data.value);
+       } else {
+         setFooterSettings({
+           address: "Gaziantep/Şehitkamil Dinç Can Plaza",
+           phone: "0533 040 72 27",
+           email: "info@mobarbilisim.com",
+           facebook: "https://facebook.com",
+           twitter: "https://twitter.com",
+           instagram: "https://instagram.com"
+         });
+       }
+    }
+    loadFooter();
+  }, [supabase]);
+
+  const saveFooter = async () => {
+    setIsSavingFooter(true);
+    await supabase.from('site_settings').upsert({ key: "footer_settings", value: footerSettings });
+    setIsSavingFooter(false);
+    alert("Alt bilgi (Footer) ayarları başarıyla kaydedildi!");
+  };
 
   return (
     <div className="space-y-8 pb-12">
@@ -120,6 +158,99 @@ export default function GlobalSettingsPage() {
           ))}
         </div>
         <p className="text-xs text-gray-400 mt-4">* Menüde yapılabilecek değişiklikler doğrudan Header üzerinde ve mobilde güncellenecektir.</p>
+      </div>
+
+      {/* İletişim & Footer Yönetimi */}
+      <div className="glass border border-gray-200/20 rounded-2xl p-6 mt-8">
+        <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
+          <span className="w-1 h-6 bg-pink-500 rounded-full"></span> İletişim ve Alt Bilgi (Footer)
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <h4 className="font-semibold text-gray-700 border-b pb-2">İletişim Bilgileri</h4>
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1"><MapPin size={16}/> Adres Bilgisi</label>
+              <textarea 
+                rows={2}
+                value={footerSettings.address}
+                onChange={(e) => setFooterSettings({...footerSettings, address: e.target.value})}
+                className="w-full px-4 py-2 rounded-xl bg-background border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1"><Phone size={16}/> Telefon Numarası</label>
+              <input 
+                type="text" 
+                value={footerSettings.phone}
+                onChange={(e) => setFooterSettings({...footerSettings, phone: e.target.value})}
+                className="w-full px-4 py-2 rounded-xl bg-background border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1"><Mail size={16}/> E-Posta Adresi</label>
+              <input 
+                type="text" 
+                value={footerSettings.email}
+                onChange={(e) => setFooterSettings({...footerSettings, email: e.target.value})}
+                className="w-full px-4 py-2 rounded-xl bg-background border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="font-semibold text-gray-700 border-b pb-2">Sosyal Medya Linkleri</h4>
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                Facebook URL
+              </label>
+              <input 
+                type="text" 
+                value={footerSettings.facebook}
+                onChange={(e) => setFooterSettings({...footerSettings, facebook: e.target.value})}
+                placeholder="https://facebook.com/sayfaniz"
+                className="w-full px-4 py-2 rounded-xl bg-background border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                Twitter (X) URL
+              </label>
+              <input 
+                type="text" 
+                value={footerSettings.twitter}
+                onChange={(e) => setFooterSettings({...footerSettings, twitter: e.target.value})}
+                placeholder="https://twitter.com/sayfaniz"
+                className="w-full px-4 py-2 rounded-xl bg-background border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-600"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                Instagram URL
+              </label>
+              <input 
+                type="text" 
+                value={footerSettings.instagram}
+                onChange={(e) => setFooterSettings({...footerSettings, instagram: e.target.value})}
+                placeholder="https://instagram.com/sayfaniz"
+                className="w-full px-4 py-2 rounded-xl bg-background border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-8 flex justify-end">
+          <button 
+            onClick={saveFooter}
+            disabled={isSavingFooter}
+            className="flex items-center gap-2 bg-pink-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-pink-700 transition-colors disabled:opacity-70"
+          >
+            <Save size={18} /> {isSavingFooter ? "Kaydediliyor..." : "İletişim & Footer Ayarlarını Kaydet"}
+          </button>
+        </div>
       </div>
     </div>
   );
