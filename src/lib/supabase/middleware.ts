@@ -29,14 +29,14 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user && request.nextUrl.pathname.startsWith('/admin')) {
+  if (!user && request.nextUrl.pathname.startsWith('/admin') && request.nextUrl.pathname !== '/admin/login') {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/admin/login'
     return NextResponse.redirect(url)
   }
 
-  // Eğer giriş yapmışsa ve login sayfasındaysa, admin paneline at
-  if (user && request.nextUrl.pathname === '/login') {
+  // Eğer giriş yapmışsa ve /admin/login sayfasındaysa, admin paneline at
+  if (user && request.nextUrl.pathname === '/admin/login') {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
     return NextResponse.redirect(url)

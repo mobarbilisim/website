@@ -76,7 +76,7 @@ export default function Header() {
 
             {/* Right Actions */}
             <div className="hidden md:flex items-center gap-6">
-              <Link href="/login" className="flex items-center gap-3 group">
+              <Link href="/giris" className="flex items-center gap-3 group">
                 <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition text-gray-700 group-hover:text-blue-600">
                   <User size={20} />
                 </div>
