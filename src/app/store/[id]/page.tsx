@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import AddToCartButton from "@/components/ui/AddToCartButton";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 
@@ -89,9 +90,14 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
                 <p className="whitespace-pre-wrap">{product.description}</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-10">
+              <div className="flex flex-col sm:flex-row gap-4 mb-10 relative">
                 <div className="flex-1">
                  <AddToCartButton product={product} /> 
+                </div>
+                {/* Embedded properly for details page styling, not top left */}
+                <div className="flex items-center">
+                  <FavoriteButton product={product} />
+                  <span className="ml-10 text-sm font-semibold text-gray-500">Favorilere Ekle</span>
                 </div>
               </div>
 
