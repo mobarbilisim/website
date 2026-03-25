@@ -1,29 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, ShoppingCart, Users, Settings, LogOut, Package, Globe } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { LayoutDashboard, ShoppingCart, Users, Settings, Globe, Package } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       {/* Sidebar */}
-      <aside className="w-64 glass-dark border-r border-white/5 flex flex-col hidden md:flex">
+      <aside className="w-64 glass-dark border-r border-white/5 flex-col hidden md:flex">
         <div className="h-16 flex items-center px-6 border-b border-white/5 pb-2 pt-4">
-          <Image 
-            src="/MOBAR.png" 
-            alt="Mobar Bilişim Logo" 
-            width={120} 
-            height={30} 
-            className="h-8 w-auto object-contain brightness-0 invert opacity-90" 
-          />
+          <Image src="/MOBAR.png" alt="Mobar Bilişim Logo" width={120} height={30} className="h-8 w-auto object-contain brightness-0 invert opacity-90" />
         </div>
         
         <nav className="flex-1 py-6 px-4 space-y-2">
-          <NavItem href="/admin" icon={<LayoutDashboard size={20} />} label="Dashboard" active />
+          <NavItem href="/admin" icon={<LayoutDashboard size={20} />} label="Dashboard" />
           <NavItem href="/admin/products" icon={<Package size={20} />} label="Ürünler" />
           <NavItem href="/admin/orders" icon={<ShoppingCart size={20} />} label="Siparişler" />
           <NavItem href="/admin/users" icon={<Users size={20} />} label="Müşteriler" />
@@ -42,17 +35,13 @@ export default function AdminLayout({
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Topbar */}
         <header className="h-16 glass z-10 flex items-center justify-between px-8 border-b border-white/5">
           <h1 className="font-semibold text-xl">Yönetim Paneli</h1>
           <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/50 flex items-center justify-center text-primary font-bold">
-              M
-            </div>
+            <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/50 flex items-center justify-center text-primary font-bold">M</div>
           </div>
         </header>
 
-        {/* Dynamic Page Content */}
         <div className="flex-1 p-8 overflow-y-auto w-full max-w-7xl mx-auto">
           {children}
         </div>
@@ -61,14 +50,18 @@ export default function AdminLayout({
   );
 }
 
-function NavItem({ href, icon, label, active = false }: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
+function NavItem({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
+  const pathname = usePathname();
+  // Exact match for /admin, prefix match for others
+  const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+
   return (
-    <Link 
-      href={href} 
+    <Link
+      href={href}
       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-        active 
-        ? "bg-primary/20 text-primary font-medium border border-primary/30" 
-        : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+        active
+          ? "bg-primary/20 text-primary font-medium border border-primary/30"
+          : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
       }`}
     >
       {icon}

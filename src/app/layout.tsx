@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/providers/CartProvider";
 import { FavoriteProvider } from "@/components/providers/FavoriteProvider";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ export default function RootLayout({
             <main className="flex-1 flex flex-col">
               {children}
             </main>
+            <WhatsAppButton />
             <Footer />
           </FavoriteProvider>
         </CartProvider>

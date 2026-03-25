@@ -164,6 +164,7 @@ export default function Header() {
                 <li key={index}>
                   <Link 
                     href={category.href}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-blue-50 group min-w-[100px] transition-colors"
                   >
                     <Icon size={24} className="text-gray-600 group-hover:text-blue-600 transition-colors" strokeWidth={1.5} />
@@ -196,7 +197,7 @@ export default function Header() {
                 <li key={idx}>
                   <Link 
                     href={category.href} 
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                     className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 text-gray-800 font-medium"
                   >
                     <Icon size={20} className="text-gray-500" />
