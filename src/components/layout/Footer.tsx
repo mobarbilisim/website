@@ -8,12 +8,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <Link href="/" className="block py-4">
-              <img 
-                src="/MOBAR.png" 
-                alt="Mobar Bilişim Logo" 
-                className="h-16 md:h-20 object-contain brightness-0 invert opacity-90" 
-              />
+            <Link href="/" className="inline-block py-2">
+              <div className="bg-white p-3 rounded-2xl w-fit">
+                <Image 
+                  src="/MOBAR.png" 
+                  alt="Mobar Bilişim Logo" 
+                  width={200}
+                  height={80}
+                  className="h-10 md:h-12 w-auto object-contain" 
+                />
+              </div>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed">
               Mükemmel teknoloji, kusursuz hizmet. Sıfır ve 2. el garantili teknoloji ürünleri, özel yazılım çözümleri ve kurumunuza özel altyapı hizmetleri.

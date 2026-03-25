@@ -3,7 +3,7 @@
 > **Son Güncelleme:** 25 Mart 2026, 03:00  
 > **Proje Adı:** Mobar Bilişim — Kurumsal Teknoloji & E-Ticaret Platformu  
 > **Alan Adı:** mobarbilisim.com  
-> **Canlı Link (Vercel):** website-two-tau-23.vercel.app → mobarbilisim.com (DNS yayılıyor)
+> **Canlı Link (Vercel Geçici):** website-3t2vrqmj6-mustafas-projects-089b1dfb.vercel.app
 
 ---
 
