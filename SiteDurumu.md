@@ -102,7 +102,7 @@
 - [x] **SEO Optimizasyonu:** Her sayfaya özel meta etiketleri, Open Graph görselleri
 
 ### 🟢 Düşük Öncelik (Gelecekte)
-- [ ] **Kullanıcı Kayıt/Giriş:** Müşterilerin hesap açıp siparişlerini takip etmesi
+- [x] **Kullanıcı Kayıt/Giriş:** Müşterilerin hesap açıp sitesinde üye girişi yapması (Girip sayfası aktif edildi)
 - [x] **Favori Sistemi:** Beğenilen ürünleri kaydetme (localStorage veya Supabase)
 - [ ] **Bildirim Sistemi:** Yeni sipariş geldiğinde admin'e bildirim
 - [ ] **Blog/Haber Sayfası:** Teknoloji haberleri ve rehberler

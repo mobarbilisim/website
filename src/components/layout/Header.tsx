@@ -8,14 +8,17 @@ import { cn } from "@/lib/utils";
 import { useCart } from "@/components/providers/CartProvider";
 import { useFavorites } from "@/components/providers/FavoriteProvider";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState<any>(null);
   const { totalItems, totalPrice } = useCart();
   const { totalFavorites } = useFavorites();
   const router = useRouter();
+  const supabase = createClient();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +32,31 @@ export default function Header() {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Auth listener
+    const getUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user || null);
+    };
+    getUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      authListener.subscription.unsubscribe();
+    };
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   const topCategories = [
     { name: "2.El Bilgisayarlar", icon: Monitor, href: "/category/2-el-bilgisayarlar" },
@@ -76,15 +102,29 @@ export default function Header() {
 
             {/* Right Actions */}
             <div className="hidden md:flex items-center gap-6">
-              <Link href="/giris" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition text-gray-700 group-hover:text-blue-600">
-                  <User size={20} />
+              {user ? (
+                <div className="flex items-center gap-3 group relative cursor-pointer">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                    <User size={20} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-gray-900 leading-tight truncate max-w-[120px]">
+                      {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                    </span>
+                    <button onClick={handleLogout} className="text-xs text-red-500 text-left hover:underline">Çıkış Yap</button>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition">Giriş Yap</span>
-                  <span className="text-xs text-gray-500">Üye Ol</span>
-                </div>
-              </Link>
+              ) : (
+                <Link href="/giris" className="flex items-center gap-3 group">
+                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition text-gray-700 group-hover:text-blue-600">
+                    <User size={20} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition">Giriş Yap</span>
+                    <span className="text-xs text-gray-500">Üye Ol</span>
+                  </div>
+                </Link>
+              )}
               
               <Link href="/favorites" className="flex items-center gap-2 group text-gray-700 hover:text-red-500 transition relative">
                 <Heart size={24} className="group-hover:fill-red-50 group-hover:text-red-500 transition" />
@@ -187,12 +227,24 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(false)}
           />
           <div className="absolute top-full left-0 w-full bg-white z-50 flex flex-col p-4 border-t md:hidden shadow-xl max-h-[calc(100vh-120px)] overflow-y-auto">
-            <div className="flex items-center gap-4 mb-8 bg-blue-50 p-4 rounded-xl">
-              <User size={24} className="text-blue-600" />
-              <div className="flex flex-col">
-                <Link href="/giris" className="font-bold text-gray-900" onClick={() => setIsMobileMenuOpen(false)}>Giriş Yap / Üye Ol</Link>
+            {user ? (
+              <div className="flex items-center gap-4 mb-8 bg-blue-50 p-4 rounded-xl">
+                <User size={24} className="text-blue-600" />
+                <div className="flex flex-col">
+                  <span className="font-bold text-gray-900 truncate max-w-[200px]">
+                    {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                  </span>
+                  <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="text-sm font-semibold text-red-500 text-left mt-1 hover:underline">Çıkış Yap</button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-4 mb-8 bg-blue-50 p-4 rounded-xl">
+                <User size={24} className="text-blue-600" />
+                <div className="flex flex-col">
+                  <Link href="/giris" className="font-bold text-gray-900 hover:text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>Giriş Yap / Üye Ol</Link>
+                </div>
+              </div>
+            )}
             
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Kategoriler</h3>
             <ul className="space-y-1">
