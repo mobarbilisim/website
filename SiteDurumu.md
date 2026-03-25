@@ -89,7 +89,7 @@
 
 ### 🔴 Yüksek Öncelik
 - [x] **Supabase Auth Entegrasyonu:** Admin paneline giriş/şifre koruması ekle (şu an herkes `/admin` adresine girebilir)
-- [ ] **Ürün Görseli Yükleme:** Mağaza ürünlerine de fotoğraf yükleme özelliği ekle (Admin > Ürünler)
+- [x] **Ürün Görseli Yükleme:** Mağaza ürünlerine de fotoğraf yükleme özelliği ekle (Admin > Ürünler)
 - [ ] **Sipariş Sistemi:** Sepete ekleme → Ödeme akışı → Sipariş kaydı (iyzico / Stripe entegrasyonu)
 - [ ] **Mobil Menü (Hamburger):** Küçük ekranlarda açılır kapanır menü
 

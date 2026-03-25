@@ -17,6 +17,8 @@ export default function AdminProductsPage() {
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [condition, setCondition] = useState("2.El");
+  const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -34,6 +36,36 @@ export default function AdminProductsPage() {
     fetchData();
   }, []);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `products/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        if (uploadError.message.includes("Bucket not found")) {
+          throw new Error("Supabase panelinden 'images' isimli bucket'ı oluşturduğunuzdan emin olun.");
+        }
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(filePath);
+      setImageUrl(publicUrl);
+    } catch (err: any) {
+      alert("Fotoğraf yükleme hatası: " + err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price) return alert("Başlık ve fiyat zorunludur.");
@@ -46,7 +78,8 @@ export default function AdminProductsPage() {
         description, 
         category_id: parseInt(categoryId), 
         condition, 
-        stock: 1 
+        stock: 1,
+        image_url: imageUrl
       }
     ]);
 
@@ -55,6 +88,7 @@ export default function AdminProductsPage() {
       setTitle("");
       setPrice("");
       setDescription("");
+      setImageUrl("");
       fetchData(); // Listeyi güncelle
     } else {
       alert("Hata: " + error.message);
@@ -95,6 +129,25 @@ export default function AdminProductsPage() {
           </div>
           
           <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">Ürün Görseli</label>
+              <div className="flex items-center gap-4">
+                {imageUrl && (
+                  <img src={imageUrl} alt="Önizleme" className="w-20 h-20 object-cover rounded-xl border border-white/10" />
+                )}
+                <div className="relative overflow-hidden bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600/30 transition-colors font-medium px-4 py-2 rounded-xl cursor-pointer flex items-center justify-center">
+                  <span>{isUploading ? "Yükleniyor..." : (imageUrl ? "Fotoğrafı Değiştir" : "Fotoğraf Seç ve Yükle")}</span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4 md:col-span-2">
               <label className="block text-sm font-medium text-gray-400">Ürün Başlığı</label>
               <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-3 bg-background border border-white/10 rounded-xl focus:border-blue-500 outline-none" placeholder="Örn: MSI B450 Anakart..." />
@@ -156,9 +209,16 @@ export default function AdminProductsPage() {
               ) : (
                 products.map((item) => (
                   <tr key={item.id} className="hover:bg-white/5 transition-colors group">
-                    <td className="py-4">
-                      <div className="font-semibold text-foreground">{item.title}</div>
-                      <div className="text-xs text-muted-foreground">#{item.id}</div>
+                    <td className="py-4 flex items-center gap-4">
+                      {item.image_url ? (
+                        <img src={item.image_url} alt={item.title} className="w-12 h-12 rounded-lg object-cover border border-white/10 shrink-0" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-xs text-muted-foreground">Yok</div>
+                      )}
+                      <div>
+                        <div className="font-semibold text-foreground">{item.title}</div>
+                        <div className="text-xs text-muted-foreground">#{item.id}</div>
+                      </div>
                     </td>
                     <td className="py-4 text-sm">{item.categories?.name || "-"}</td>
                     <td className="py-4 text-sm">
