@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/components/providers/CartProvider";
 import { useFavorites } from "@/components/providers/FavoriteProvider";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Header() {
@@ -18,6 +18,7 @@ export default function Header() {
   const { totalItems, totalPrice } = useCart();
   const { totalFavorites } = useFavorites();
   const router = useRouter();
+  const pathname = usePathname();
   const supabase = createClient();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -59,9 +60,9 @@ export default function Header() {
   };
 
   const topCategories = [
-    { name: "2.El Bilgisayarlar", icon: Monitor, href: "/category/2-el-bilgisayarlar" },
-    { name: "Sıfır Bilgisayarlar", icon: Laptop, href: "/category/sifir-bilgisayarlar" },
     { name: "Yazılım Çözümleri", icon: Code, href: "/category/yazilim-cozumleri" },
+    { name: "Sıfır Ürünler", icon: Laptop, href: "/sifir-urunler" },
+    { name: "2. El Ürünler", icon: Monitor, href: "/ikinci-el-urunler" },
     { name: "Bileşenler", icon: Cpu, href: "/category/bilesenler" },
     { name: "Çevre Birimleri", icon: Mouse, href: "/category/cevre-birimleri" },
     { name: "Telefonlar", icon: Smartphone, href: "/category/telefonlar" },
@@ -104,15 +105,17 @@ export default function Header() {
             <div className="hidden md:flex items-center gap-6">
               {user ? (
                 <div className="flex items-center gap-3 group relative cursor-pointer">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                    <User size={20} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-gray-900 leading-tight truncate max-w-[120px]">
-                      {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                    </span>
-                    <button onClick={handleLogout} className="text-xs text-red-500 text-left hover:underline">Çıkış Yap</button>
-                  </div>
+                  <Link href="/hesabim" className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition">
+                      <User size={20} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-gray-900 leading-tight truncate max-w-[120px] hover:text-blue-600 transition">
+                        {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                      </span>
+                    </div>
+                  </Link>
+                  <button onClick={handleLogout} className="text-xs text-red-500 font-medium hover:underline self-end pb-0.5 ml-2">Çıkış</button>
                 </div>
               ) : (
                 <Link href="/giris" className="flex items-center gap-3 group">
@@ -200,17 +203,19 @@ export default function Header() {
           <ul className="flex items-center justify-between overflow-x-auto py-2">
             {topCategories.map((category, index) => {
               const Icon = category.icon;
+              const isActive = pathname === category.href || pathname.startsWith(category.href + "/");
               return (
                 <li key={index}>
                   <Link 
                     href={category.href}
                     onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-blue-50 group min-w-[100px] transition-colors"
+                    className={`flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-blue-50 group min-w-[100px] transition-colors relative ${isActive ? 'bg-blue-50/80' : ''}`}
                   >
-                    <Icon size={24} className="text-gray-600 group-hover:text-blue-600 transition-colors" strokeWidth={1.5} />
-                    <span className="text-xs font-semibold text-gray-700 group-hover:text-blue-700 whitespace-nowrap">
+                    <Icon size={24} className={`transition-colors ${isActive ? 'text-blue-600' : 'text-gray-600 group-hover:text-blue-600'}`} strokeWidth={1.5} />
+                    <span className={`text-xs font-semibold whitespace-nowrap ${isActive ? 'text-blue-700' : 'text-gray-700 group-hover:text-blue-700'}`}>
                       {category.name}
                     </span>
+                    {isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-t-full"></span>}
                   </Link>
                 </li>
               )
@@ -229,11 +234,13 @@ export default function Header() {
           <div className="absolute top-full left-0 w-full bg-white z-50 flex flex-col p-4 border-t md:hidden shadow-xl max-h-[calc(100vh-120px)] overflow-y-auto">
             {user ? (
               <div className="flex items-center gap-4 mb-8 bg-blue-50 p-4 rounded-xl">
-                <User size={24} className="text-blue-600" />
-                <div className="flex flex-col">
-                  <span className="font-bold text-gray-900 truncate max-w-[200px]">
+                <Link href="/hesabim" onClick={() => setIsMobileMenuOpen(false)} className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                  <User size={24} />
+                </Link>
+                <div className="flex flex-col flex-1 overflow-hidden">
+                  <Link href="/hesabim" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-900 truncate max-w-[200px] hover:text-blue-600">
                     {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                  </span>
+                  </Link>
                   <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="text-sm font-semibold text-red-500 text-left mt-1 hover:underline">Çıkış Yap</button>
                 </div>
               </div>
@@ -250,14 +257,15 @@ export default function Header() {
             <ul className="space-y-1">
               {topCategories.map((category, idx) => {
                 const Icon = category.icon;
+                const isActive = pathname === category.href || pathname.startsWith(category.href + "/");
                 return (
                   <li key={idx}>
                     <Link 
                       href={category.href} 
                       onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
-                      className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 text-gray-800 font-medium"
+                      className={`flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-800'}`}
                     >
-                      <Icon size={20} className="text-gray-500" />
+                      <Icon size={20} className={isActive ? "text-blue-600" : "text-gray-500"} />
                       {category.name}
                     </Link>
                   </li>

@@ -46,38 +46,33 @@ const defaultSlides = [
 ];
 
 const defaultCards = [
-  {
-    title: "2.EL MASAÜSTÜ <br/> BİLGİSAYARLAR",
-    features: ["• Çıkışlı Kurumsal", "• Temiz Kondisyon", "• Hızlı Kargo"],
-    bg: "from-blue-400 to-blue-500",
-    icon: "Monitor",
-    btnText: "ÜRÜNLERİ GÖR",
-    btnLink: "/store",
-  },
-  {
-    title: "2.EL ALL IN ONE <br/> BİLGİSAYARLAR",
-    features: ["• Kompakt Tasarım", "• Ofis İçin İdeal", "• Garantili"],
-    bg: "from-orange-400 to-orange-500",
-    icon: "Layers",
-    btnText: "ÜRÜNLERİ GÖR",
-    btnLink: "/store",
-  },
-  {
-    title: "YAZILIM <br/> ÇÖZÜMLERİ",
-    features: ["• Web Siteleri", "• E-Ticaret / Kurumsal", "• Hızlı Teslimat"],
-    bg: "from-emerald-400 to-emerald-500",
-    icon: "Code",
-    btnText: "PAKETLERİ GÖR",
-    btnLink: "/yazilim-cozumleri",
-  },
-  {
-    title: "2.EL MİNİ OFİS <br/> BİLGİSAYARLARI",
-    features: ["• Sessiz • Az Yer Kaplar", "• Kurumsal Kullanım", "• Garantili Tüketim"],
-    bg: "from-purple-500 to-purple-600",
-    icon: "Server",
-    btnText: "ÜRÜNLERİ GÖR",
-    btnLink: "/store",
-  }
+    {
+      title: "YAZILIM<br/>ÇÖZÜMLERİ",
+      features: ["• Modern Web Siteleri", "• E-Ticaret / Kurumsal", "• Hızlı Teslimat & SEO"],
+      bg: "from-slate-800 to-slate-900",
+      icon: "Code",
+      btnText: "PAKETLERİ GÖR",
+      btnLink: "/category/yazilim-cozumleri",
+      image_url: ""
+    },
+    {
+      title: "SIFIR GARANTİLİ<br/>ÜRÜNLER",
+      features: ["• Sıfır Kapalı Kutu", "• Tam Garanti Süresi", "• Hızlı Kargo"],
+      bg: "from-blue-500 to-blue-600",
+      icon: "Laptop",
+      btnText: "ÜRÜNLERİ İNCELE",
+      btnLink: "/sifir-urunler",
+      image_url: ""
+    },
+    {
+      title: "2. EL GARANTİLİ<br/>BİLGİSAYARLAR",
+      features: ["• Tüm Testleri Yapıldı", "• 3 Ay Mobar Garantisi", "• Kurumsal Temiz Cihazlar"],
+      bg: "from-purple-500 to-purple-600",
+      icon: "Monitor",
+      btnText: "FIRSATLARI GÖR",
+      btnLink: "/ikinci-el-urunler",
+      image_url: ""
+    }
 ];
 
 export default function HomepageAdminPage() {
@@ -102,7 +97,7 @@ export default function HomepageAdminPage() {
         const sObj = data.find(d => d.key === 'homepage_slides');
         const cObj = data.find(d => d.key === 'homepage_cards');
         if (sObj?.value?.length > 0) setSlides(sObj.value);
-        if (cObj?.value?.length > 0) setCards(cObj.value);
+        if (cObj?.value?.length > 0) setCards(cObj.value.slice(0, 3)); // 4->3 truncate if old value is present
       }
     } catch (err) {
       console.error(err);
@@ -313,7 +308,7 @@ export default function HomepageAdminPage() {
 
       {/* Kartlar */}
       <div className="glass border border-white/10 rounded-3xl p-6 shadow-sm">
-        <h3 className="text-xl font-bold text-foreground mb-6">2. Özellik Kartları (4 Adet)</h3>
+        <h3 className="text-xl font-bold text-foreground mb-6">2. Özellik Kartları (3 Adet Merkez Kartlar)</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card, index) => (
@@ -359,6 +354,12 @@ export default function HomepageAdminPage() {
                       const newCards = [...cards]; newCards[index].btnLink = e.target.value; setCards(newCards);
                     }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
                   </div>
+                </div>
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Görsel URL <span className="text-xs text-gray-500">(Zorunlu değil, girilirse İkon yerine gösterilir)</span></label>
+                  <input type="text" placeholder="https://..." value={card.image_url || ''} onChange={(e) => {
+                    const newCards = [...cards]; newCards[index].image_url = e.target.value; setCards(newCards);
+                  }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
                 </div>
               </div>
             </div>

@@ -54,36 +54,31 @@ export default function Home() {
 
   const defaultCards = [
     {
-      title: "2.EL MASAÜSTÜ <br/> BİLGİSAYARLAR",
-      features: ["• Çıkışlı Kurumsal", "• Temiz Kondisyon", "• Hızlı Kargo"],
-      bg: "from-blue-400 to-blue-500",
-      icon: "Monitor",
-      btnText: "ÜRÜNLERİ GÖR",
-      btnLink: "/store",
-    },
-    {
-      title: "2.EL ALL IN ONE <br/> BİLGİSAYARLAR",
-      features: ["• Kompakt Tasarım", "• Ofis İçin İdeal", "• Garantili"],
-      bg: "from-orange-400 to-orange-500",
-      icon: "Layers",
-      btnText: "ÜRÜNLERİ GÖR",
-      btnLink: "/store",
-    },
-    {
-      title: "YAZILIM <br/> ÇÖZÜMLERİ",
-      features: ["• Web Siteleri", "• E-Ticaret / Kurumsal", "• Hızlı Teslimat"],
-      bg: "from-emerald-400 to-emerald-500",
+      title: "MODERN YAZILIM<br/>ÇÖZÜMLERİ",
+      features: ["• Modern Web Siteleri", "• E-Ticaret / Kurumsal", "• Hızlı Teslimat & SEO"],
+      bg: "from-slate-800 to-slate-900",
       icon: "Code",
       btnText: "PAKETLERİ GÖR",
-      btnLink: "/yazilim-cozumleri",
+      btnLink: "/category/yazilim-cozumleri",
+      image_url: ""
     },
     {
-      title: "2.EL MİNİ OFİS <br/> BİLGİSAYARLARI",
-      features: ["• Sessiz • Az Yer Kaplar", "• Kurumsal Kullanım", "• Garantili Tüketim"],
+      title: "SIFIR GARANTİLİ<br/>ÜRÜNLER",
+      features: ["• Sıfır Kapalı Kutu", "• Tam Garanti Süresi", "• Hızlı Kargo"],
+      bg: "from-blue-500 to-blue-600",
+      icon: "Laptop",
+      btnText: "ÜRÜNLERİ İNCELE",
+      btnLink: "/sifir-urunler",
+      image_url: ""
+    },
+    {
+      title: "2. EL GARANTİLİ<br/>BİLGİSAYARLAR",
+      features: ["• Tüm Testleri Yapıldı", "• 3 Ay Mobar Garantisi", "• Kurumsal Temiz Cihazlar"],
       bg: "from-purple-500 to-purple-600",
-      icon: "Server",
-      btnText: "ÜRÜNLERİ GÖR",
-      btnLink: "/store",
+      icon: "Monitor",
+      btnText: "FIRSATLARI GÖR",
+      btnLink: "/ikinci-el-urunler",
+      image_url: ""
     }
   ];
 
@@ -230,26 +225,38 @@ export default function Home() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {activeCards.map((card, idx) => {
-            const CardIcon = getIcon(card.icon, "Monitor");
-            return (
-              <motion.div key={idx} variants={itemVariants} className={`bg-gradient-to-br ${card.bg} p-6 rounded-3xl text-white shadow-lg overflow-hidden relative group hover:-translate-y-1 transition-transform`}>
-                <CardIcon size={100} className="absolute -right-4 -bottom-4 text-white/20 group-hover:scale-110 transition-transform" />
-                <h3 className="text-xl font-bold uppercase mb-2" dangerouslySetInnerHTML={{ __html: card.title }}></h3>
-                <ul className="text-xs font-medium text-white/80 mb-6 space-y-1">
-                  {card.features.map((feat: string, fIdx: number) => (
-                    <li key={fIdx}>{feat}</li>
-                  ))}
-                </ul>
-                <Link href={card.btnLink} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-bold border border-white/20 transition-colors inline-flex items-center gap-2 mt-auto">
-                  {card.btnText} <ChevronRight size={16} />
-                </Link>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+              const CardIcon = getIcon(card.icon, "Monitor");
+              return (
+                <motion.div key={idx} variants={itemVariants} className={`bg-gradient-to-br ${card.bg} rounded-3xl text-white shadow-xl overflow-hidden relative group hover:-translate-y-2 transition-transform duration-300 min-h-[220px] flex items-stretch`}>
+                  
+                  {/* Left Content */}
+                  <div className="p-6 md:p-8 flex flex-col z-10 w-full sm:w-3/5">
+                    <h3 className="text-xl md:text-2xl font-black uppercase mb-3 leading-tight tracking-wide drop-shadow-md" dangerouslySetInnerHTML={{ __html: card.title }}></h3>
+                    <ul className="text-sm font-medium text-white/90 mb-8 space-y-1.5 flex-1">
+                      {card.features.map((feat: string, fIdx: number) => (
+                        <li key={fIdx} className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white/70"></span> {feat.replace("•", "").trim()}</li>
+                      ))}
+                    </ul>
+                    <Link href={card.btnLink} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="w-max bg-white text-gray-900 hover:bg-gray-100 px-5 py-2.5 rounded-xl text-sm font-extrabold shadow-lg transition-colors inline-flex items-center gap-2">
+                      {card.btnText} <ChevronRight size={18} />
+                    </Link>
+                  </div>
+
+                  {/* Right Image/Icon Cover */}
+                  <div className="hidden sm:flex absolute right-0 top-0 h-full w-2/5 justify-end items-end p-4 overflow-hidden mask-image-gradient">
+                    {card.image_url ? (
+                      <Image src={card.image_url} alt="Card Image" fill className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                    ) : (
+                      <CardIcon size={160} strokeWidth={1} className="text-white/20 group-hover:text-white/40 group-hover:scale-125 transition-transform duration-500 origin-bottom-right drop-shadow-2xl translate-x-10 translate-y-10" />
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
       </section>
 
       {/* Services Section */}
