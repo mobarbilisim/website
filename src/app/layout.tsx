@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/providers/CartProvider";
+import { FavoriteProvider } from "@/components/providers/FavoriteProvider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -49,11 +50,13 @@ export default function RootLayout({
         className={`${inter.variable} font-sans antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col`}
       >
         <CartProvider>
-          <Header />
-          <main className="flex-1 flex flex-col">
-            {children}
-          </main>
-          <Footer />
+          <FavoriteProvider>
+            <Header />
+            <main className="flex-1 flex flex-col">
+              {children}
+            </main>
+            <Footer />
+          </FavoriteProvider>
         </CartProvider>
       </body>
     </html>

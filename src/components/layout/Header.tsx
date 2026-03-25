@@ -6,6 +6,7 @@ import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/components/providers/CartProvider";
+import { useFavorites } from "@/components/providers/FavoriteProvider";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
@@ -13,6 +14,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { totalItems, totalPrice } = useCart();
+  const { totalFavorites } = useFavorites();
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -84,8 +86,13 @@ export default function Header() {
                 </div>
               </Link>
               
-              <Link href="/favorites" className="flex items-center gap-2 group text-gray-700 hover:text-red-500 transition">
+              <Link href="/favorites" className="flex items-center gap-2 group text-gray-700 hover:text-red-500 transition relative">
                 <Heart size={24} className="group-hover:fill-red-50 group-hover:text-red-500 transition" />
+                {totalFavorites > 0 && (
+                  <span className="absolute -top-1.5 -left-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white">
+                    {totalFavorites}
+                  </span>
+                )}
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-500">Favori</span>
                   <span className="text-sm font-semibold text-gray-900 group-hover:text-red-500 transition">Ürünlerim</span>

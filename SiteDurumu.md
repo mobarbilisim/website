@@ -103,7 +103,7 @@
 
 ### 🟢 Düşük Öncelik (Gelecekte)
 - [ ] **Kullanıcı Kayıt/Giriş:** Müşterilerin hesap açıp siparişlerini takip etmesi
-- [ ] **Favori Sistemi:** Beğenilen ürünleri kaydetme (localStorage veya Supabase)
+- [x] **Favori Sistemi:** Beğenilen ürünleri kaydetme (localStorage veya Supabase)
 - [ ] **Bildirim Sistemi:** Yeni sipariş geldiğinde admin'e bildirim
 - [ ] **Blog/Haber Sayfası:** Teknoloji haberleri ve rehberler
 - [ ] **Çoklu Dil Desteği:** Türkçe / İngilizce

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/components/ui/AddToCartButton";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 
 // Server-side Supabase client since this is a Server Component
 const supabase = createClient(
@@ -52,6 +53,7 @@ export default async function StorePage({
             <div key={product.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between">
               <div>
                 <Link href={`/store/${product.id}`} className="block relative w-full h-48 bg-gray-50 rounded-xl mb-4 flex items-center justify-center text-gray-300 overflow-hidden group-hover:shadow-md transition">
+                  <FavoriteButton product={product} />
                   {product.image_url ? (
                     <Image src={product.image_url} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
