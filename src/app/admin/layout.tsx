@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, ShoppingCart, Users, Settings, LogOut, Package } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Users, Settings, LogOut, Package, Globe } from "lucide-react";
+import LogoutButton from "./LogoutButton";
 
 export default function AdminLayout({
   children,
@@ -30,11 +31,12 @@ export default function AdminLayout({
           <NavItem href="/admin/settings" icon={<Settings size={20} />} label="Ayarlar" />
         </nav>
 
-        <div className="p-4 border-t border-white/5">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-white/5 hover:text-red-400 transition-colors">
-            <LogOut size={20} />
-            Küresel Siteye Dön
+        <div className="p-4 border-t border-white/5 space-y-2">
+          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-white/5 hover:text-blue-400 transition-colors">
+            <Globe size={20} />
+            Siteye Dön
           </Link>
+          <LogoutButton />
         </div>
       </aside>
 
