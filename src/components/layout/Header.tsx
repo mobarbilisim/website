@@ -5,10 +5,12 @@ import Image from "next/image";
 import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse, Smartphone, Code } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/components/providers/CartProvider";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { totalItems, totalPrice } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,13 +85,15 @@ export default function Header() {
               <Link href="/cart" className="flex items-center gap-3 group">
                 <div className="relative">
                   <ShoppingCart size={28} className="text-gray-700 group-hover:text-blue-600 transition" />
-                  <span className="absolute -top-2 -right-2 w-5 h-5 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
-                    0
-                  </span>
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 w-5 h-5 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                      {totalItems}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition">Sepetim</span>
-                  <span className="text-xs text-gray-500 font-medium">0.00 ₺</span>
+                  <span className="text-xs text-gray-500 font-medium">{totalPrice.toLocaleString('tr-TR')} ₺</span>
                 </div>
               </Link>
             </div>
@@ -98,9 +102,11 @@ export default function Header() {
             <div className="flex md:hidden items-center gap-4">
               <Link href="/cart" className="relative group">
                 <ShoppingCart size={24} className="text-gray-800" />
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                  0
-                </span>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
               </Link>
               <button 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

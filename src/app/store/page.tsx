@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
+import AddToCartButton from "@/components/ui/AddToCartButton";
 
 // Server-side Supabase client since this is a Server Component
 const supabase = createClient(
@@ -48,11 +49,9 @@ export default async function StorePage() {
                 <p className="text-xs text-gray-500 line-clamp-2 mb-4">{product.description}</p>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
                 <div className="text-lg font-bold">{(product.price).toLocaleString('tr-TR')} ₺</div>
-                <button className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-600 hover:text-white transition-colors">
-                  İncele
-                </button>
+                <AddToCartButton product={product} />
               </div>
             </div>
           ))

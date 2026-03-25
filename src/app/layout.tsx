@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { CartProvider } from "@/components/providers/CartProvider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -24,11 +25,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col`}
       >
-        <Header />
-        <main className="flex-1 flex flex-col">
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <Header />
+          <main className="flex-1 flex flex-col">
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
