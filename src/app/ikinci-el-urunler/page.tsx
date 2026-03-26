@@ -1,22 +1,18 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import { ChevronRight } from "lucide-react";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-export const revalidate = 0; // Disable cache so products show up immediately
+export const revalidate = 0;
 
 export default async function IkinciElUrunlerPage({
   searchParams,
 }: {
   searchParams: Promise<{ c?: string }>
 }) {
+  const supabase = await createClient();
   const resolvedParams = await searchParams;
   const cId = resolvedParams?.c;
 

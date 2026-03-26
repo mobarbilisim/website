@@ -143,7 +143,12 @@ export default function Home() {
       {/* Hero Banner */}
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         <div
-          onClick={() => router.push(activeSlide.btnLink || "/store")}
+          onClick={(e) => {
+            // Eğer tıklanan element bir buton içindeyse yönlendirme yapma
+            const target = e.target as HTMLElement;
+            if (target.closest('button') || target.closest('[data-slider-dot]')) return;
+            router.push(activeSlide.btnLink || "/store");
+          }}
           className={`relative w-full h-[450px] md:h-[550px] bg-gradient-to-br ${activeSlide.bg} rounded-3xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000 border border-white/10 cursor-pointer`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -153,7 +158,7 @@ export default function Home() {
           <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-500/20 blur-[100px] pointer-events-none rounded-full" />
 
           {/* Text Content */}
-          <div className="relative z-10 px-8 md:px-16 w-full md:w-3/5">
+          <div className="relative z-10 px-8 md:px-16 w-full md:w-3/5" key={currentSlide}>
             <div className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-xs uppercase tracking-[0.2em] rounded-full mb-6 shadow-sm">
               {activeSlide.subtitle}
             </div>
@@ -175,8 +180,8 @@ export default function Home() {
           </div>
 
           {/* Right Side Icons / Image */}
-          <div className="hidden md:flex absolute right-0 top-0 h-full w-2/5 justify-end items-center overflow-hidden pr-10">
-            <div className="relative flex items-center justify-center w-full h-full">
+          <div className="hidden md:flex absolute right-0 top-0 h-full w-2/5 justify-end items-center overflow-hidden pr-10 pointer-events-none">
+            <div className="relative flex items-center justify-center w-full h-full" key={`icon-${currentSlide}`}>
               {(activeSlide as any).image_url ? (
                 <Image src={(activeSlide as any).image_url} alt="Slider" fill className="object-contain max-h-[90%] drop-shadow-2xl p-4 scale-110" />
               ) : (
@@ -188,20 +193,30 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Slider Controls */}
-          <button onClick={prevSlide} className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-4 transition-all z-20 cursor-pointer shadow-xl">
+          {/* Slider Controls - Sol */}
+          <button 
+            type="button"
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 transition-all z-30 cursor-pointer shadow-xl"
+          >
             <ChevronLeft size={28} />
           </button>
-          <button onClick={nextSlide} className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all z-20 cursor-pointer shadow-xl">
+          {/* Slider Controls - Sağ */}
+          <button 
+            type="button"
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 transition-all z-30 cursor-pointer shadow-xl"
+          >
             <ChevronRight size={28} />
           </button>
 
           {/* Dots */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
             {slides.map((_, i) => (
               <div
                 key={i}
-                onClick={(e) => goToSlide(e, i)}
+                data-slider-dot="true"
+                onClick={() => setCurrentSlide(i)}
                 className={`h-1.5 rounded-full cursor-pointer transition-all duration-300 ${i === currentSlide ? "bg-white w-10 shadow-[0_0_10px_rgba(255,255,255,0.8)]" : "bg-white/30 w-3 hover:bg-white/60"}`}
               />
             ))}

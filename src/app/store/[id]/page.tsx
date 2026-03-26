@@ -1,17 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 
-// Server-side Supabase client since this is a Server Component
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export async function generateMetadata({ params }: { params: { id: string } }) {
+  const supabase = await createClient();
   const { data: product } = await supabase
     .from("products")
     .select("title, description")
@@ -29,6 +24,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+  const supabase = await createClient();
   const { data: product } = await supabase
     .from("products")
     .select("*, categories(name)")
