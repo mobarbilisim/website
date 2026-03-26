@@ -3,6 +3,7 @@
 import { ArrowRight, ChevronLeft, ChevronRight, Code, Monitor, Laptop, Server, Map, Layers, Cpu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -80,6 +81,7 @@ export default function Home() {
   const [slides, setSlides] = useState(defaultSlides);
   const [cards, setCards] = useState(defaultCards);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -88,9 +90,9 @@ export default function Home() {
       try {
         const { data, error } = await supabase.from('site_settings').select('*');
         if (data && !error) {
-          const sObj = data.find(d => d.key === 'homepage_slides');
+          const sObj = data.find((d: any) => d.key === 'homepage_slides');
           if (sObj?.value?.length > 0) setSlides(sObj.value);
-          const cObj = data.find(d => d.key === 'homepage_cards');
+          const cObj = data.find((d: any) => d.key === 'homepage_cards');
           if (cObj?.value?.length > 0) setCards(cObj.value);
         }
       } catch (err) {
@@ -105,7 +107,7 @@ export default function Home() {
     if (isHovered || !mounted) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [isHovered, slides.length, mounted]);
 
@@ -140,9 +142,9 @@ export default function Home() {
     <div className="bg-gray-50 pb-20">
       {/* Hero Banner */}
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <Link
-          href={activeSlide.btnLink || "/store"}
-          className={`relative w-full h-[450px] md:h-[550px] bg-gradient-to-br ${activeSlide.bg} rounded-3xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000 border border-white/10`}
+        <div
+          onClick={() => router.push(activeSlide.btnLink || "/store")}
+          className={`relative w-full h-[450px] md:h-[550px] bg-gradient-to-br ${activeSlide.bg} rounded-3xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000 border border-white/10 cursor-pointer`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -209,7 +211,7 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
             <div className="h-full bg-white/50 transition-all duration-300" style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }} />
           </div>
-        </Link>
+        </div>
       </section>
 
       {/* 3 Category Cards */}
