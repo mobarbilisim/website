@@ -141,8 +141,7 @@ export default function Home() {
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         <Link 
           href={activeSlide.btnLink || "/store"}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}
-          className={`relative w-full h-[450px] md:h-[550px] bg-gradient-to-br ${activeSlide.bg} rounded-3xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000 border border-white/10 cursor-pointer block`}
+          className={`relative w-full h-[450px] md:h-[550px] bg-gradient-to-br ${activeSlide.bg} rounded-3xl overflow-hidden shadow-2xl group flex items-center transition-colors duration-1000 border border-white/10 cursor-pointer`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -168,9 +167,9 @@ export default function Home() {
                 {activeSlide.desc}
               </p>
               <div className="flex items-center gap-4">
-                <Link href={activeSlide.btnLink || "/store"} onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="inline-flex items-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                <span className="inline-flex items-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-extrabold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                   {activeSlide.btnText} <ArrowRight size={20} className="text-blue-600" />
-                </Link>
+                </span>
                 <div className="hidden sm:flex text-white/50 text-sm font-semibold tracking-wider uppercase ml-4 items-center gap-2">
                   <span className="w-8 h-px bg-white/30 hidden md:block"></span> 
                   KEŞFET
@@ -209,13 +208,13 @@ export default function Home() {
 
           {/* Slider Controls */}
           <button 
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length)}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length); }}
             className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-4 transition-all z-20 cursor-pointer shadow-xl"
           >
             <ChevronLeft size={28} />
           </button>
           <button 
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % activeSlides.length)}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentSlide((prev) => (prev + 1) % activeSlides.length); }}
             className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 hover:bg-white/30 text-white rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all z-20 cursor-pointer shadow-xl"
           >
             <ChevronRight size={28} />
@@ -226,7 +225,7 @@ export default function Home() {
             {activeSlides.map((_, i) => (
               <div 
                 key={i} 
-                onClick={() => setCurrentSlide(i)}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentSlide(i); }}
                 className={`h-1.5 rounded-full cursor-pointer transition-all duration-300 ${i === currentSlide ? "bg-white w-10 shadow-[0_0_10px_rgba(255,255,255,0.8)]" : "bg-white/30 w-3 hover:bg-white/60"}`}
               ></div>
             ))}
