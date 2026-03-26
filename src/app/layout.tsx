@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/providers/CartProvider";
 import { FavoriteProvider } from "@/components/providers/FavoriteProvider";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import PWARegister from "@/components/ui/PWARegister";
 import Script from "next/script";
+import ConditionalShell from "@/components/layout/ConditionalShell";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -23,14 +21,7 @@ export const metadata: Metadata = {
     description: "Sıfır ve 2. el garantili teknoloji ürünleri, özel yazılım.",
     url: "https://mobarbilisim.com",
     siteName: "Mobar Bilişim",
-    images: [
-      {
-        url: "/MOBAR.png",
-        width: 1200,
-        height: 630,
-        alt: "Mobar Bilişim",
-      },
-    ],
+    images: [{ url: "/MOBAR.png", width: 1200, height: 630, alt: "Mobar Bilişim" }],
     locale: "tr_TR",
     type: "website",
   },
@@ -42,28 +33,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr">
-      <body
-        className={`${inter.variable} font-sans antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col`}
-      >
+      <body className={`${inter.variable} font-sans antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col`}>
         <CartProvider>
           <FavoriteProvider>
             <PWARegister />
-            <Header />
-            <main className="flex-1 flex flex-col">
+            <ConditionalShell>
               {children}
-            </main>
-            <WhatsAppButton />
-            <Footer />
+            </ConditionalShell>
           </FavoriteProvider>
         </CartProvider>
-        
+
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
