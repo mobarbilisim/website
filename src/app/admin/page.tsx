@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { DollarSign, Activity, CreditCard, Laptop } from "lucide-react";
+import { DollarSign, Activity, CreditCard, Laptop, TrendingUp, ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -21,17 +22,15 @@ export default function AdminDashboard() {
     async function loadStats() {
       try {
         setLoading(true);
-        // Products count
         const { count: productsCount } = await supabase
           .from("products")
           .select("*", { count: "exact", head: true });
 
-        // Orders fetch
         const { data: orders } = await supabase
           .from("orders")
-          .select("id, total_price, status, created_at")
+          .select("id, total_price, status, created_at, customer_name")
           .order("created_at", { ascending: false })
-          .limit(50); // Fetch all recent for stats
+          .limit(50);
           
         const gelir = orders?.reduce((sum, order) => sum + (Number(order.total_price) || 0), 0) || 0;
         const bekleyen = orders?.filter(o => o.status === "Bekliyor").length || 0;
@@ -55,86 +54,110 @@ export default function AdminDashboard() {
   }, []);
 
   const stats = [
-    { title: "Toplam Ciro", value: loading ? "..." : `₺${metrics.totalGelir.toLocaleString('tr-TR')}`, change: "Tüm zamanlar", icon: <DollarSign size={22} className="text-emerald-400" /> },
-    { title: "Toplam Sipariş", value: loading ? "..." : metrics.toplamSiparis.toString(), change: "Sistemdeki tüm kayıtlar", icon: <CreditCard size={22} className="text-blue-400" /> },
-    { title: "Aktif Ürünler", value: loading ? "..." : metrics.toplamUrun.toString(), change: "Mağazada listelenenler", icon: <Laptop size={22} className="text-purple-400" /> },
-    { title: "Bekleyen Yönetim İşlemi", value: loading ? "..." : metrics.bekleyenSiparis.toString(), change: "Acil ilgilenilmesi gereken", icon: <Activity size={22} className="text-orange-400" /> },
+    { title: "Toplam Ciro", value: loading ? "..." : `₺${metrics.totalGelir.toLocaleString('tr-TR')}`, sub: "Tüm zamanlar", icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { title: "Toplam Sipariş", value: loading ? "..." : metrics.toplamSiparis.toString(), sub: "Tüm kayıtlar", icon: CreditCard, color: "text-blue-600", bg: "bg-blue-50" },
+    { title: "Aktif Ürünler", value: loading ? "..." : metrics.toplamUrun.toString(), sub: "Mağazada listelenen", icon: Laptop, color: "text-purple-600", bg: "bg-purple-50" },
+    { title: "Bekleyen Sipariş", value: loading ? "..." : metrics.bekleyenSiparis.toString(), sub: "İlgilenilmesi gereken", icon: Activity, color: "text-orange-600", bg: "bg-orange-50" },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Sisteme Hoş Geldiniz</h2>
-        <p className="text-muted-foreground mt-2">İşletmenizin ve e-ticaret sitenizin güncel özeti burada.</p>
+        <h2 className="text-2xl font-bold text-gray-900">Hoş Geldiniz 👋</h2>
+        <p className="text-gray-500 text-sm mt-1">İşletmenizin güncel durumu aşağıda özetlenmiştir.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-            className="glass p-6 rounded-2xl flex flex-col border border-white/5 relative overflow-hidden group"
-          >
-            <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 pointer-events-none">
-              {stat.icon}
-            </div>
-            <div className="flex items-center gap-3 mb-4">
-              {stat.icon}
-              <h3 className="text-sm font-medium text-muted-foreground">{stat.title}</h3>
-            </div>
-            <div className="text-3xl font-bold mb-1">{stat.value}</div>
-            <p className="text-xs text-muted-foreground">{stat.change}</p>
-          </motion.div>
-        ))}
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, i) => {
+          const Icon = stat.icon;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
+              className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{stat.title}</span>
+                <div className={`w-8 h-8 rounded-lg ${stat.bg} flex items-center justify-center`}>
+                  <Icon size={16} className={stat.color} />
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+              <p className="text-xs text-gray-400 mt-1">{stat.sub}</p>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-7 gap-6 mt-8">
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass border border-white/5 rounded-2xl p-6 lg:col-span-4 h-96 flex flex-col justify-center gap-6"
-        >
-          <div className="text-center">
-            <h3 className="text-xl font-bold text-white mb-2">Performans Özeti</h3>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              Sistem sağlıklı çalışıyor. Grafik ve detaylı raporlama modülü ilerici bir aşamada aktif edilecektir.
-            </p>
+      {/* Bottom Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* System Status */}
+        <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">Sistem Durumu</h3>
+          <div className="space-y-3">
+            {[
+              { label: "Veritabanı Bağlantısı", status: "Aktif", color: "bg-emerald-500" },
+              { label: "Satış Altyapısı", status: "Aktif", color: "bg-emerald-500" },
+              { label: "Storage (Fotoğraflar)", status: "Aktif", color: "bg-emerald-500" },
+              { label: "Auth (Kimlik Doğrulama)", status: "Aktif", color: "bg-emerald-500" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                <span className="text-sm text-gray-600">{item.label}</span>
+                <span className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                  <span className={`w-2 h-2 rounded-full ${item.color}`}></span>
+                  {item.status}
+                </span>
+              </div>
+            ))}
           </div>
-          <div className="flex justify-center flex-wrap gap-4 mt-4">
-             <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-2 rounded-xl text-sm font-medium">Veritabanı: Aktif</div>
-             <div className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-2 rounded-xl text-sm font-medium">Satış Altyapısı: Aktif</div>
-             <div className="bg-purple-500/10 border border-purple-500/20 text-purple-400 px-4 py-2 rounded-xl text-sm font-medium">Storage: Aktif</div>
+          <div className="mt-4 flex gap-2">
+            <Link href="/admin/products" className="flex-1 text-center text-xs font-semibold bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+              Ürünlere Git
+            </Link>
+            <Link href="/admin/orders" className="flex-1 text-center text-xs font-semibold bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition">
+              Siparişlere Git
+            </Link>
           </div>
-        </motion.div>
-        
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-          className="glass border border-white/5 rounded-2xl p-6 lg:col-span-3 h-96 overflow-hidden flex flex-col"
-        >
-          <h3 className="font-semibold mb-4 text-white">Son Siparişler</h3>
-          <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+        </div>
+
+        {/* Recent Orders */}
+        <div className="lg:col-span-3 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-gray-700">Son Siparişler</h3>
+            <Link href="/admin/orders" className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+              Tümü <ArrowUpRight size={12} />
+            </Link>
+          </div>
+          <div className="space-y-3">
             {loading ? (
-              <div className="text-center text-sm text-muted-foreground mt-10">Yükleniyor...</div>
+              <div className="text-center text-sm text-gray-400 py-8">Yükleniyor...</div>
             ) : recentOrders.length === 0 ? (
-              <div className="text-center text-sm text-muted-foreground mt-10">Henüz sipariş yok.</div>
+              <div className="text-center text-sm text-gray-400 py-8">Henüz sipariş bulunmuyor.</div>
             ) : (
               recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between border-b border-white/5 pb-3">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-200">Sipariş #{order.id}</span>
-                    <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleString('tr-TR')} • <span className={order.status === 'Bekliyor' ? 'text-orange-400' : 'text-emerald-400'}>{order.status}</span></span>
+                <div key={order.id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
+                  <div>
+                    <div className="text-sm font-medium text-gray-800">#{order.id} — {order.customer_name || "Müşteri"}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">{new Date(order.created_at).toLocaleString('tr-TR')}</div>
                   </div>
-                  <span className="font-semibold text-emerald-400">₺{(order.total_price || 0).toLocaleString('tr-TR')}</span>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-gray-900">₺{(order.total_price || 0).toLocaleString('tr-TR')}</div>
+                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                      order.status === 'Bekliyor' ? 'bg-orange-100 text-orange-600' :
+                      order.status === 'Tamamlandı' ? 'bg-emerald-100 text-emerald-600' :
+                      'bg-blue-100 text-blue-600'
+                    }`}>
+                      {order.status}
+                    </span>
+                  </div>
                 </div>
               ))
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

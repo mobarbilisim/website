@@ -12,7 +12,7 @@ const defaultSlides = [
     subtitle: "Fırsat Ürünleri",
     desc: "Kurumsal Performans, Uygun Maliyet. Tüm testleri yapılmış, 3 ay garantili ürünleri hemen inceleyin.",
     bg: "from-slate-800 to-slate-900",
-    accent: "text-blue-400",
+    accent: "text-blue-600",
     btnText: "Hemen İncele",
     btnLink: "/store",
     image_url: "",
@@ -131,7 +131,7 @@ export default function HomepageAdminPage() {
       subtitle: "Alt Başlık",
       desc: "Açıklama...",
       bg: "from-slate-800 to-slate-900",
-      accent: "text-blue-400",
+      accent: "text-blue-600",
       btnText: "İncele",
       btnLink: "/store",
       image_url: "",
@@ -188,11 +188,11 @@ export default function HomepageAdminPage() {
     <div className="space-y-8 pb-12 w-full max-w-5xl">
       <div>
         <h2 className="text-3xl font-bold tracking-tight mb-2">Anasayfa İçerik Yönetimi</h2>
-        <p className="text-muted-foreground">
+        <p className="text-gray-500">
           Slaytları ve aşağıdaki 4 özellik kartını buradan düzenleyebilirsiniz. Değişiklikleri kaydetmek için en alttaki butonu kullanın.
         </p>
         {statusMessage && (
-          <div className="mt-4 p-4 bg-blue-500/10 text-blue-400 rounded-xl flex items-center gap-2 border border-blue-500/20">
+          <div className="mt-4 p-4 bg-blue-500/10 text-blue-600 rounded-xl flex items-center gap-2 border border-blue-500/20">
             <Info size={20} />
             <span className="font-medium">{statusMessage}</span>
           </div>
@@ -200,66 +200,66 @@ export default function HomepageAdminPage() {
       </div>
 
       {/* Slaytlar */}
-      <div className="glass border border-white/10 rounded-3xl p-6 shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-foreground">1. Kayan Slaytlar (Hero)</h3>
-          <button onClick={addSlide} className="flex items-center gap-2 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-400 px-4 py-2 rounded-lg font-semibold text-sm transition-colors">
+          <h3 className="text-xl font-bold text-gray-900">1. Kayan Slaytlar (Hero)</h3>
+          <button onClick={addSlide} className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border border-blue-500/30 text-blue-600 px-4 py-2 rounded-lg font-semibold text-sm transition-colors">
             <Plus size={16} /> Yeni Ekle
           </button>
         </div>
         
         <div className="space-y-6">
           {slides.map((slide, index) => (
-            <div key={index} className="border border-white/10 bg-white/5 rounded-2xl p-6 relative">
+            <div key={index} className="border border-gray-200 bg-white/5 rounded-2xl p-6 relative">
               <button 
                 onClick={() => removeSlide(index)}
-                className="absolute top-4 right-4 bg-red-500/10 text-red-500 p-2 rounded-lg hover:bg-red-500/20 transition-colors"
+                className="absolute top-4 right-4 bg-red-50 text-red-600 p-2 rounded-lg hover:bg-red-100 transition-colors"
                 title="Slaytı Sil"
               >
                 <Trash2 size={18} />
               </button>
-              <h4 className="font-bold text-foreground mb-4">Slayt #{index + 1}</h4>
+              <h4 className="font-bold text-gray-900 mb-4">Slayt #{index + 1}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Küçük Üst Bilgi (Subtitle)</label>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Küçük Üst Bilgi (Subtitle)</label>
                   <input type="text" value={slide.subtitle} onChange={(e) => {
                     const newSlides = [...slides]; newSlides[index].subtitle = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-foreground" />
+                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Ana Başlık</label>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Ana Başlık</label>
                   <input type="text" value={slide.title} onChange={(e) => {
                     const newSlides = [...slides]; newSlides[index].title = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-foreground" />
+                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Açıklama</label>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Açıklama</label>
                   <textarea value={slide.desc} rows={2} onChange={(e) => {
                     const newSlides = [...slides]; newSlides[index].desc = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-foreground"></textarea>
+                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900"></textarea>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Buton Metni</label>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Buton Metni</label>
                   <input type="text" value={slide.btnText} onChange={(e) => {
                     const newSlides = [...slides]; newSlides[index].btnText = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-foreground" />
+                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Buton Linki (örn: /store)</label>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Buton Linki (örn: /store)</label>
                   <input type="text" value={slide.btnLink || ''} onChange={(e) => {
                     const newSlides = [...slides]; newSlides[index].btnLink = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-foreground" />
+                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
                 </div>
-                <div className="md:col-span-2 p-4 bg-background border border-white/10 rounded-xl">
-                  <label className="block text-sm font-bold text-foreground mb-2">Görsel Seçenekleri (İkon yerine Fotoğraf)</label>
-                  <p className="text-xs text-muted-foreground mb-2">Eğer bir fotoğraf URL'si girerseniz, ikonlar iptal edilir ve bu fotoğraf gösterilir. Ya direkt bilgisayardan yükleyin ya da internetten link kopyalayın.</p>
+                <div className="md:col-span-2 p-4 bg-white border border-gray-200 rounded-xl">
+                  <label className="block text-sm font-bold text-gray-900 mb-2">Görsel Seçenekleri (İkon yerine Fotoğraf)</label>
+                  <p className="text-xs text-gray-500 mb-2">Eğer bir fotoğraf URL'si girerseniz, ikonlar iptal edilir ve bu fotoğraf gösterilir. Ya direkt bilgisayardan yükleyin ya da internetten link kopyalayın.</p>
                   
                   <div className="flex flex-col md:flex-row gap-4 mb-3">
                     <input type="text" placeholder="Fotoğraf Linki (https://...)" value={slide.image_url || ''} onChange={(e) => {
                       const newSlides = [...slides]; newSlides[index].image_url = e.target.value; setSlides(newSlides);
-                    }} className="flex-1 px-4 py-2 rounded-lg bg-black/20 border border-white/10 focus:border-blue-500 outline-none text-foreground" />
+                    }} className="flex-1 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
                     
-                    <div className="flex-shrink-0 relative overflow-hidden bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600/30 transition-colors font-medium px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center">
+                    <div className="flex-shrink-0 relative overflow-hidden bg-blue-50 text-blue-600 border border-blue-500/30 hover:bg-blue-100 transition-colors font-medium px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center">
                       <span className="cursor-pointer">Direkt Yükle</span>
                       <input 
                         type="file" 
@@ -272,94 +272,94 @@ export default function HomepageAdminPage() {
 
                   {slide.image_url && (
                     <div className="mb-4">
-                      <img src={slide.image_url} alt="Önizleme" className="h-24 object-contain rounded border border-white/10" />
+                      <img src={slide.image_url} alt="Önizleme" className="h-24 object-contain rounded border border-gray-200" />
                     </div>
                   )}
                   
                   <div className="flex gap-4">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Arka İkon</label>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Arka İkon</label>
                       <input type="text" value={slide.Icon1 || ''} onChange={(e) => {
                         const newSlides = [...slides]; newSlides[index].Icon1 = e.target.value; setSlides(newSlides);
-                      }} className="w-full px-3 py-1.5 rounded-md bg-black/20 border border-white/10 outline-none text-sm text-foreground" />
+                      }} className="w-full px-3 py-1.5 rounded-md bg-gray-50 border border-gray-200 outline-none text-sm text-gray-900" />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Ön İkon</label>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Ön İkon</label>
                       <input type="text" value={slide.Icon2 || ''} onChange={(e) => {
                         const newSlides = [...slides]; newSlides[index].Icon2 = e.target.value; setSlides(newSlides);
-                      }} className="w-full px-3 py-1.5 rounded-md bg-black/20 border border-white/10 outline-none text-sm text-foreground" />
+                      }} className="w-full px-3 py-1.5 rounded-md bg-gray-50 border border-gray-200 outline-none text-sm text-gray-900" />
                     </div>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Arkaplan Rengi (from-... to-...)</label>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Arkaplan Rengi (from-... to-...)</label>
                   <input type="text" value={slide.bg} onChange={(e) => {
                     const newSlides = [...slides]; newSlides[index].bg = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-foreground" />
+                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
                 </div>
               </div>
             </div>
           ))}
           {slides.length === 0 && (
-            <div className="text-center py-10 text-muted-foreground bg-white/5 border border-white/10 rounded-xl">Hiç slayt bulunmuyor. Eklemek için "Yeni Ekle"ye tıklayın.</div>
+            <div className="text-center py-10 text-gray-500 bg-white border border-gray-200 shadow-sm rounded-xl">Hiç slayt bulunmuyor. Eklemek için "Yeni Ekle"ye tıklayın.</div>
           )}
         </div>
       </div>
 
       {/* Kartlar */}
-      <div className="glass border border-white/10 rounded-3xl p-6 shadow-sm">
-        <h3 className="text-xl font-bold text-foreground mb-6">2. Özellik Kartları (3 Adet Merkez Kartlar)</h3>
+      <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">2. Özellik Kartları (3 Adet Merkez Kartlar)</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card, index) => (
-            <div key={index} className="border border-white/10 bg-white/5 rounded-2xl p-4">
-              <h4 className="font-bold text-foreground mb-4 inline-block bg-background px-3 py-1 rounded-full text-xs shadow-sm border border-white/10">Kart #{index + 1}</h4>
+            <div key={index} className="border border-gray-200 bg-white/5 rounded-2xl p-4">
+              <h4 className="font-bold text-gray-900 mb-4 inline-block bg-white px-3 py-1 rounded-full text-xs shadow-sm border border-gray-200">Kart #{index + 1}</h4>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Başlık (HTML br kullanılabilir)</label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Başlık (HTML br kullanılabilir)</label>
                   <input type="text" value={card.title} onChange={(e) => {
                     const newCards = [...cards]; newCards[index].title = e.target.value; setCards(newCards);
-                  }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                  }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Özellikler (Virgülle ayırın)</label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Özellikler (Virgülle ayırın)</label>
                   <input type="text" value={card.features?.join(', ') || ''} onChange={(e) => {
                     const newCards = [...cards]; newCards[index].features = e.target.value.split(',').map(s => s.trim()); setCards(newCards);
-                  }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                  }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">İkon Adı</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">İkon Adı</label>
                     <input type="text" value={card.icon} onChange={(e) => {
                       const newCards = [...cards]; newCards[index].icon = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">Arkaplan Sınıfı</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Arkaplan Sınıfı</label>
                     <input type="text" value={card.bg} onChange={(e) => {
                       const newCards = [...cards]; newCards[index].bg = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">Buton Metni</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Buton Metni</label>
                     <input type="text" value={card.btnText} onChange={(e) => {
                       const newCards = [...cards]; newCards[index].btnText = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">Buton Linki</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Buton Linki</label>
                     <input type="text" value={card.btnLink} onChange={(e) => {
                       const newCards = [...cards]; newCards[index].btnLink = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                   </div>
                 </div>
                 <div className="mt-3">
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Görsel URL <span className="text-xs text-gray-500">(Zorunlu değil, girilirse İkon yerine gösterilir)</span></label>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Görsel URL <span className="text-xs text-gray-500">(Zorunlu değil, girilirse İkon yerine gösterilir)</span></label>
                   <input type="text" placeholder="https://..." value={card.image_url || ''} onChange={(e) => {
                     const newCards = [...cards]; newCards[index].image_url = e.target.value; setCards(newCards);
-                  }} className="w-full px-3 py-2 rounded-lg bg-background border border-white/10 focus:border-blue-500 outline-none text-sm text-foreground" />
+                  }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
                 </div>
               </div>
             </div>
@@ -391,3 +391,4 @@ export default function HomepageAdminPage() {
     </div>
   );
 }
+
