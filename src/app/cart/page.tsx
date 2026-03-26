@@ -30,7 +30,7 @@ export default function CartPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.from("orders").insert([
+      const { data: orderData, error } = await supabase.from("orders").insert([
         {
           customer_name: formData.name,
           customer_email: formData.email,
@@ -40,9 +40,28 @@ export default function CartPage() {
           status: "Bekliyor",
           items: items
         }
-      ]);
+      ]).select("id").single();
 
       if (error) throw error;
+
+      // Admin'e e-posta bildirimi gönder (arka planda, hata olsa da sipariş alındı sayılır)
+      try {
+        await fetch("/api/send-order-notification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: orderData?.id,
+            customerName: formData.name,
+            customerEmail: formData.email,
+            customerPhone: formData.phone,
+            customerAddress: formData.address,
+            items: items,
+            totalPrice: totalPrice,
+          }),
+        });
+      } catch (notifErr) {
+        console.warn("Bildirim gönderilemedi (sipariş yine de alındı):", notifErr);
+      }
 
       setSuccess(true);
       clearCart();

@@ -375,12 +375,12 @@ export default function HomepageAdminPage() {
         <Save size={24} /> {isSaving ? "Kaydediliyor..." : "Tüm Değişiklikleri Kaydet"}
       </button>
 
-      <div className="p-6 bg-slate-900 text-white rounded-3xl mt-8">
-        <h4 className="font-bold flex items-center gap-2 text-yellow-500"><Info size={20} /> SQL Tablo Kurulumu</h4>
-        <p className="text-sm text-slate-300 mt-2 mb-4">
-          Bu modülün düzgün çalışması için Supabase'de `site_settings` isimli bir tabloya ihtiyacınız vardır. Eğer yoksa SQL Editör'den çalıştırın:
+      <div className="p-6 bg-blue-50 border border-blue-200 rounded-2xl mt-8">
+        <h4 className="font-bold flex items-center gap-2 text-blue-700"><Info size={20} /> SQL Tablo Kurulumu</h4>
+        <p className="text-sm text-blue-600/80 mt-2 mb-4">
+          Bu modülün düzgün çalışması için Supabase&apos;de &apos;site_settings&apos; isimli bir tabloya ihtiyacınız vardır. Eğer yoksa SQL Editör&apos;den çalıştırın:
         </p>
-        <pre className="text-xs bg-black/50 p-4 rounded-xl font-mono text-emerald-400 overflow-x-auto">
+        <pre className="text-xs bg-gray-800 p-4 rounded-xl font-mono text-emerald-400 overflow-x-auto">
 {`CREATE TABLE public.site_settings (
   key text PRIMARY KEY,
   value jsonb NOT NULL
