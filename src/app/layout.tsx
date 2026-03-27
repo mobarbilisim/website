@@ -6,6 +6,9 @@ import { FavoriteProvider } from "@/components/providers/FavoriteProvider";
 import PWARegister from "@/components/ui/PWARegister";
 import Script from "next/script";
 import ConditionalShell from "@/components/layout/ConditionalShell";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -13,6 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mobarbilisim.com"),
   title: "Mobar Bilişim | Kurumsal Teknoloji & 2. El Çözümler",
   description: "Sıfır ve 2. el garantili teknoloji ürünleri, profesyonel özel yazılım çözümleri ve kurumunuza özel altyapı hizmetleri.",
   keywords: ["bilgisayar", "2. el teknoloji", "kurumsal bilişim", "özel yazılım", "teknik servis", "mobar"],
@@ -40,7 +44,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CartProvider>
           <FavoriteProvider>
             <PWARegister />
-            <ConditionalShell>
+            <ConditionalShell 
+              header={<Header />} 
+              footer={<Footer />} 
+              whatsappButton={<WhatsAppButton />}
+            >
               {children}
             </ConditionalShell>
           </FavoriteProvider>

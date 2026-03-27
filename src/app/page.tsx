@@ -107,7 +107,7 @@ export default function Home() {
     if (isHovered || !mounted) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4000);
+    }, 3500);
     return () => clearInterval(interval);
   }, [isHovered, slides.length, mounted]);
 

@@ -2,8 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import FavoriteButton from "@/components/ui/FavoriteButton";
+import ProductCard from "@/components/ui/ProductCard";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ShieldCheck, Truck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, ChevronRight, Info } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = await createClient();
@@ -27,7 +28,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
   const supabase = await createClient();
   const { data: product } = await supabase
     .from("products")
-    .select("*, categories(name)")
+    .select("*, categories(name, id)")
     .eq("id", params.id)
     .single();
 
@@ -43,95 +44,148 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     );
   }
 
-  return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link href="/store" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-blue-600 mb-8 transition-colors">
-          <ArrowLeft size={16} /> Mağazaya Dön
-        </Link>
+  // Benzer Ürünler (Aynı kategoriden)
+  const { data: relatedProducts } = await supabase
+    .from("products")
+    .select("*, categories(name)")
+    .eq("category_id", product.category_id)
+    .neq("id", product.id)
+    .limit(4);
 
-        <div className="bg-white rounded-3xl p-6 md:p-12 shadow-sm border border-gray-100">
+  const categoryName = (product as any).categories?.name || 'Kategorisiz';
+
+  return (
+    <div className="bg-gray-50 min-h-screen pb-20">
+      {/* Breadcrumbs */}
+      <div className="bg-white border-b border-gray-100 mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <nav className="flex items-center gap-2 text-sm font-medium text-gray-500">
+            <Link href="/" className="hover:text-blue-600 transition">Anasayfa</Link>
+            <ChevronRight size={14} />
+            <Link href="/store" className="hover:text-blue-600 transition">Mağaza</Link>
+            <ChevronRight size={14} />
+            <span className="text-gray-900 truncate">{product.title}</span>
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl p-6 md:p-12 shadow-sm border border-gray-100 mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             
             {/* Image Section */}
-            <div className="relative w-full aspect-square bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100">
-              {product.image_url ? (
-                <Image src={product.image_url} alt={product.title} fill className="object-cover" />
-              ) : (
-                <div className="text-gray-400 font-medium">Bu ürün için görsel eklenmemiş</div>
-              )}
-              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm border border-white/20 uppercase">
-                {product.condition}
+            <div className="space-y-4">
+              <div className="relative w-full aspect-square bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100 group">
+                {product.image_url ? (
+                  <Image src={product.image_url} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                ) : (
+                  <div className="text-gray-400 font-medium text-center p-8">Bu ürün için görsel eklenmemiş</div>
+                )}
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm border border-white/20 uppercase">
+                  {product.condition === 'new' ? 'Sıfır' : '2. El'}
+                </div>
               </div>
             </div>
 
             {/* Details Section */}
-            <div className="flex flex-col justify-center">
-              <div className="mb-2">
-                <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                  {((product as any).categories)?.name || 'Kategorisiz'}
+            <div className="flex flex-col">
+              <div className="mb-4">
+                <span className="text-xs font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full">
+                  {categoryName}
                 </span>
               </div>
               
-              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mt-4 mb-2 leading-tight">
+              <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 leading-tight tracking-tight">
                 {product.title}
               </h1>
-              <div className="text-sm text-gray-400 mb-8">Ürün Kodu: #{product.id} • Stok: {product.stock > 0 ? 'Mevcut' : 'Tükendi'}</div>
               
-              <div className="text-4xl font-black text-gray-900 mb-8">
-                {(product.price).toLocaleString('tr-TR')} ₺
+              <div className="flex items-center gap-4 mb-8">
+                <div className="text-4xl font-black text-blue-600">
+                  {(product.price).toLocaleString('tr-TR')} ₺
+                </div>
+                {product.stock > 0 ? (
+                  <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">
+                    <CheckCircle2 size={12} /> Stokta Var
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-md">
+                    Tükendi
+                  </span>
+                )}
               </div>
               
-              <div className="mb-10 text-gray-600 leading-relaxed max-w-lg">
-                <p className="whitespace-pre-wrap">{product.description}</p>
+              <div className="bg-gray-50 rounded-2xl p-6 mb-10 border border-gray-100">
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <Info size={16} className="text-blue-600" /> Ürün Açıklaması
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap">
+                  {product.description || "Bu ürün için henüz bir açıklama girilmemiş."}
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-10 relative">
+              <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <div className="flex-1">
-                 <AddToCartButton product={product} /> 
+                  <AddToCartButton product={product} /> 
                 </div>
-                {/* Embedded properly for details page styling, not top left */}
-                <div className="flex items-center">
+                <div className="flex items-center justify-center p-3 px-6 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer group">
                   <FavoriteButton product={product} />
-                  <span className="ml-10 text-sm font-semibold text-gray-500">Favorilere Ekle</span>
+                  <span className="ml-3 text-sm font-bold text-gray-700 group-hover:text-blue-600">Favori</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-8 border-t border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-900">Stoktan Hemen Teslim</h4>
-                    <p className="text-xs text-gray-500">16:00'a kadar sipariş verin</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-900">Garantili Ürün</h4>
-                    <p className="text-xs text-gray-500">Testleri tamamlanmıştır</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-gray-100">
+                <div className="flex flex-col gap-2">
+                  <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
                     <Truck size={20} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-gray-900">Ücretsiz Kargo</h4>
-                    <p className="text-xs text-gray-500">Tüm alışverişlerde geçerli</p>
+                    <h4 className="text-xs font-black uppercase text-gray-900">Kargo</h4>
+                    <p className="text-[11px] text-gray-500 font-bold">Ücretsiz Teslimat</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-gray-900">Garanti</h4>
+                    <p className="text-[11px] text-gray-500 font-bold">Mobar Güvencesi</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+                    <CheckCircle2 size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-gray-900">Kondisyon</h4>
+                    <p className="text-[11px] text-gray-500 font-bold uppercase">{product.condition === 'new' ? 'Sıfır' : 'İkinci El'}</p>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
+
+        {/* Related Products Section */}
+        {relatedProducts && relatedProducts.length > 0 && (
+          <div className="mt-20">
+            <div className="flex items-center justify-between mb-10">
+              <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">
+                Benzer Ürünler
+              </h2>
+              <Link href="/store" className="text-sm font-bold text-blue-600 hover:underline">
+                Tümünü Gör
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
