@@ -6,12 +6,13 @@ import ProductCard from "@/components/ui/ProductCard";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, ChevronRight, Info } from "lucide-react";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
   const supabase = await createClient();
   const { data: product } = await supabase
     .from("products")
     .select("title, description")
-    .eq("id", params.id)
+    .eq("id", resolvedParams.id)
     .single();
 
   if (!product) {
@@ -24,12 +25,13 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
   const supabase = await createClient();
   const { data: product } = await supabase
     .from("products")
     .select("*, categories(name, id)")
-    .eq("id", params.id)
+    .eq("id", resolvedParams.id)
     .single();
 
   if (!product) {

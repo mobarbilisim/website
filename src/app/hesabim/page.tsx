@@ -11,6 +11,7 @@ export default function HesabimPage() {
   const [user, setUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "orders" | "address">("profile");
   const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState<any[]>([]);
   
   // Profile Form States
   const [fullName, setFullName] = useState("");
@@ -36,6 +37,15 @@ export default function HesabimPage() {
         setPhone(profile.phone || "");
         setAddress(profile.address || "");
       }
+      
+      const { data: userOrders } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("customer_email", session.user.email)
+        .order("created_at", { ascending: false });
+        
+      setOrders(userOrders || []);
+      
       setLoading(false);
     };
     fetchUser();
@@ -165,15 +175,57 @@ export default function HesabimPage() {
 
             {activeTab === "orders" && (
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Siparislerim</h3>
-                <div className="flex flex-col items-center justify-center py-16 text-center bg-gray-50 rounded-2xl border border-gray-100">
-                  <Package size={48} className="text-gray-300 mb-4" />
-                  <p className="text-gray-500 font-medium mb-2">Henuz bir siparisiniz bulunmuyor.</p>
-                  <p className="text-sm text-gray-400 max-w-sm">Mobar Bilisim magazasindan ihtiyaciniza uygun teknoloji urunlerini hemen kesfedin.</p>
-                  <Link href="/store" className="mt-6 font-bold text-blue-600 hover:text-blue-700 bg-white px-6 py-3 rounded-xl shadow-sm border border-gray-200 transition-colors">
-                    Magazaya Git
-                  </Link>
-                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><Package size={24} className="text-blue-600"/> Sipariş Geçmişim</h3>
+                {orders.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center bg-gray-50 rounded-2xl border border-gray-100">
+                    <Package size={48} className="text-gray-300 mb-4" />
+                    <p className="text-gray-500 font-medium mb-2">Henüz bir siparişiniz bulunmuyor.</p>
+                    <p className="text-sm text-gray-400 max-w-sm">Mobar Bilişim mağazasından ihtiyacınıza uygun teknoloji ürünlerini hemen keşfedin.</p>
+                    <Link href="/store" className="mt-6 font-bold text-blue-600 hover:text-blue-700 bg-white px-6 py-3 rounded-xl shadow-sm border border-gray-200 transition-colors">
+                      Mağazaya Git
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {orders.map((order) => (
+                      <div key={order.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-gray-50">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-mono text-gray-900 font-bold border rounded px-2 py-0.5 text-xs bg-gray-50">#{order.id}</span>
+                              <span className="text-xs text-gray-500">{new Date(order.created_at).toLocaleString('tr-TR')}</span>
+                            </div>
+                            <div className="text-sm text-gray-600 truncate max-w-xs">{order.customer_address}</div>
+                          </div>
+                          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2">
+                            <span className="text-lg font-black text-blue-600">₺{(order.total_price).toLocaleString('tr-TR')}</span>
+                            <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                              order.status === 'Bekliyor' ? 'bg-orange-100 text-orange-600' :
+                              order.status === 'Hazırlanıyor' ? 'bg-blue-100 text-blue-600' :
+                              order.status === 'Kargolandı' ? 'bg-purple-100 text-purple-600' :
+                              'bg-emerald-100 text-emerald-600'
+                            }`}>
+                              {order.status}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sipariş Edilen Ürünler</h4>
+                          {order.items?.map((item: any, i: number) => (
+                            <div key={i} className="flex items-center justify-between text-sm bg-gray-50 px-4 py-2 rounded-lg">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-xs">{item.quantity}</span>
+                                <span className="font-semibold text-gray-700 line-clamp-1">{item.title}</span>
+                              </div>
+                              <span className="font-medium text-gray-500 whitespace-nowrap">{(item.price).toLocaleString('tr-TR')} ₺</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
