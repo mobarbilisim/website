@@ -7,6 +7,9 @@ import PWARegister from "@/components/ui/PWARegister";
 import Script from "next/script";
 import ConditionalShell from "@/components/layout/ConditionalShell";
 import AdminIndicator from "@/components/ui/AdminIndicator";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -42,7 +45,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <FavoriteProvider>
             <PWARegister />
             <AdminIndicator />
-            <ConditionalShell>
+            <ConditionalShell 
+              header={<Header />}
+              footer={<Footer />}
+              whatsappButton={<WhatsAppButton />}
+            >
               {children}
             </ConditionalShell>
           </FavoriteProvider>
