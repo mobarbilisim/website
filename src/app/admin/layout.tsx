@@ -11,9 +11,13 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { FileText, Tags } from "lucide-react";
+
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/admin/products", icon: Package, label: "Ürünler" },
+  { href: "/admin/categories", icon: Tags, label: "Kategoriler" },
+  { href: "/admin/blogs", icon: FileText, label: "Blog Yazıları" },
   { href: "/admin/orders", icon: ShoppingCart, label: "Siparişler" },
   { href: "/admin/users", icon: Users, label: "Müşteriler" },
   { href: "/admin/homepage", icon: Home, label: "Anasayfa İçerik" },

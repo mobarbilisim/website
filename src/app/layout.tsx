@@ -6,6 +6,7 @@ import { FavoriteProvider } from "@/components/providers/FavoriteProvider";
 import PWARegister from "@/components/ui/PWARegister";
 import Script from "next/script";
 import ConditionalShell from "@/components/layout/ConditionalShell";
+import AdminIndicator from "@/components/ui/AdminIndicator";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CartProvider>
           <FavoriteProvider>
             <PWARegister />
+            <AdminIndicator />
             <ConditionalShell>
               {children}
             </ConditionalShell>

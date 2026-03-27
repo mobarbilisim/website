@@ -63,8 +63,8 @@ export default function Header() {
     { name: "Yazılım Çözümleri", icon: Code, href: "/category/yazilim-cozumleri" },
     { name: "Sıfır Ürünler", icon: Laptop, href: "/sifir-urunler" },
     { name: "2. El Ürünler", icon: Monitor, href: "/ikinci-el-urunler" },
-    { name: "Bileşenler", icon: Cpu, href: "/category/bilesenler" },
-    { name: "Çevre Birimleri", icon: Mouse, href: "/category/cevre-birimleri" },
+    { name: "Bileşenler & Aksesuarlar", icon: Cpu, href: "/category/bilesenler-ve-aksesuarlar" },
+    { name: "Çevre Birimleri", icon: Mouse, href: "/category/bilesenler-ve-aksesuarlar" },
     { name: "Telefonlar", icon: Smartphone, href: "/category/telefonlar" },
   ];
 

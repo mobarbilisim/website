@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Package, Clock, Truck, CheckCircle2 } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle2, Trash2 } from "lucide-react";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -25,6 +25,13 @@ export default function AdminOrdersPage() {
     const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", id);
     if (!error) fetchOrders();
     else alert("Durum güncellenemedi: " + error.message);
+  };
+
+  const deleteOrder = async (id: number) => {
+    if (!confirm("Bu siparişi tamamen silmek istediğinize emin misiniz?")) return;
+    const { error } = await supabase.from("orders").delete().eq("id", id);
+    if (!error) fetchOrders();
+    else alert("Sipariş silinemedi: " + error.message);
   };
 
   const statusBadge = (status: string) => {
@@ -80,6 +87,7 @@ export default function AdminOrdersPage() {
                 <th className="px-6 py-3 font-semibold">Ürünler</th>
                 <th className="px-6 py-3 font-semibold">Tutar</th>
                 <th className="px-6 py-3 font-semibold">Durum</th>
+                <th className="px-6 py-3 font-semibold text-right">İşlem</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -120,6 +128,15 @@ export default function AdminOrdersPage() {
                         <option value="Kargolandı">🟣 Kargolandı</option>
                         <option value="Tamamlandı">🟢 Tamamlandı</option>
                       </select>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button 
+                        onClick={() => deleteOrder(order.id)}
+                        className="text-gray-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                        title="Siparişi Sil"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))

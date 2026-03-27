@@ -367,25 +367,14 @@ export default function HomepageAdminPage() {
         </div>
       </div>
 
-      <button 
-        onClick={handleSave}
-        disabled={isSaving}
-        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-blue-500/30 transition-all text-lg disabled:opacity-70"
-      >
-        <Save size={24} /> {isSaving ? "Kaydediliyor..." : "Tüm Değişiklikleri Kaydet"}
-      </button>
-
-      <div className="p-6 bg-blue-50 border border-blue-200 rounded-2xl mt-8">
-        <h4 className="font-bold flex items-center gap-2 text-blue-700"><Info size={20} /> SQL Tablo Kurulumu</h4>
-        <p className="text-sm text-blue-600/80 mt-2 mb-4">
-          Bu modülün düzgün çalışması için Supabase&apos;de &apos;site_settings&apos; isimli bir tabloya ihtiyacınız vardır. Eğer yoksa SQL Editör&apos;den çalıştırın:
-        </p>
-        <pre className="text-xs bg-gray-800 p-4 rounded-xl font-mono text-emerald-400 overflow-x-auto">
-{`CREATE TABLE public.site_settings (
-  key text PRIMARY KEY,
-  value jsonb NOT NULL
-);`}
-        </pre>
+      <div className="sticky bottom-6 z-10">
+        <button 
+          onClick={handleSave}
+          disabled={isSaving}
+          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold shadow-2xl shadow-blue-600/30 transition-all text-lg disabled:opacity-70 disabled:pointer-events-none"
+        >
+          <Save size={24} /> {isSaving ? "Değişiklikler Kaydediliyor, Lütfen Bekleyin..." : "Tüm Değişiklikleri Kaydet ve Yayınla"}
+        </button>
       </div>
 
     </div>
