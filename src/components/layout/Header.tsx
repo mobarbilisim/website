@@ -242,7 +242,7 @@ export default function Header() {
                     {user.user_metadata?.full_name || user.email?.split("@")[0]}
                   </Link>
                   <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Blog</Link>
-                  <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Hakkımızda</Link>
+                  <Link href="/hakkimizda" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Hakkımızda</Link>
                   <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="text-sm font-semibold text-red-500 text-left mt-1 hover:underline">Çıkış Yap</button>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium text-gray-800">
+                <Link href="/hakkimizda" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium text-gray-800">
                   <Info size={20} className="text-gray-500" />
                   Hakkımızda
                 </Link>

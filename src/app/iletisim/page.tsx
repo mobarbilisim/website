@@ -1,12 +1,22 @@
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "İletişim - Mobar Bilişim",
-  description: "Bize ulaşın. Mobar Bilişim iletişim bilgileri, adres, telefon ve mesaj gönderimi.",
-};
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
 
 export default function IletisimPage() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    // Simüle edilen gönderim işlemi
+    setTimeout(() => {
+      setLoading(false);
+      setIsSubmitted(true);
+    }, 1500);
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Banner */}
@@ -83,42 +93,59 @@ export default function IletisimPage() {
           {/* Contact Form & Map */}
           <div className="lg:col-span-2 flex flex-col gap-8">
             <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Bize Mesaj Gönderin</h2>
-              <p className="text-gray-500 mb-8">İstek, öneri veya şikayetlerinizi yandaki form üzerinden bize anında ulaştırabilirsiniz.</p>
-              
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Adınız Soyadınız *</label>
-                    <input type="text" className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400" placeholder="Ahmet Yılmaz" required />
+              {isSubmitted ? (
+                <div className="py-12 text-center">
+                  <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 size={40} />
                   </div>
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">E-Posta Adresiniz *</label>
-                    <input type="email" className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400" placeholder="ornek@posta.com" required />
-                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Mesajınız Alındı!</h2>
+                  <p className="text-gray-500 mb-8">Bize ulaştığınız için teşekkürler. Ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
+                  <button onClick={() => setIsSubmitted(false)} className="text-blue-600 font-bold hover:underline">Yeni bir mesaj gönder</button>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Konu *</label>
-                  <select className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-700 cursor-pointer" required>
-                    <option value="">Lütfen Bir Konu Seçin</option>
-                    <option value="Satis">Satış ve Bilgi Ekibi</option>
-                    <option value="Teknik">Teknik Destek ve Servis</option>
-                    <option value="Yazilim">Özel Yazılım Çözümleri</option>
-                    <option value="Diger">Diğer / Öneri</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Mesajınız *</label>
-                  <textarea rows={5} className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none placeholder:text-gray-400" placeholder="Size nasıl yardımcı olabiliriz?" required></textarea>
-                </div>
-                
-                <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-blue-500/20 w-full md:w-auto ml-auto">
-                  <Send size={18} />
-                  Mesajı Gönder
-                </button>
-              </form>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Bize Mesaj Gönderin</h2>
+                  <p className="text-gray-500 mb-8">İstek, öneri veya şikayetlerinizi yan taraftaki form üzerinden bize anında ulaştırabilirsiniz.</p>
+                  
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Adınız Soyadınız *</label>
+                        <input type="text" className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400" placeholder="Ahmet Yılmaz" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">E-Posta Adresiniz *</label>
+                        <input type="email" className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400" placeholder="ornek@posta.com" required />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Konu *</label>
+                      <select className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-700 cursor-pointer" required>
+                        <option value="">Lütfen Bir Konu Seçin</option>
+                        <option value="Satis">Satış ve Bilgi Ekibi</option>
+                        <option value="Teknik">Teknik Destek ve Servis</option>
+                        <option value="Yazilim">Özel Yazılım Çözümleri</option>
+                        <option value="Diger">Diğer / Öneri</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Mesajınız *</label>
+                      <textarea rows={5} className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none placeholder:text-gray-400" placeholder="Size nasıl yardımcı olabiliriz?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-blue-500/20 w-full md:w-auto ml-auto">
+                      {loading ? "Gönderiliyor..." : (
+                        <>
+                          <Send size={18} />
+                          Mesajı Gönder
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
             </div>
             
             {/* Google Map Box */}
