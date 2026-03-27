@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse, Smartphone, Code } from "lucide-react";
+import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse, Smartphone, Code, BookOpen, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/components/providers/CartProvider";
@@ -42,7 +42,7 @@ export default function Header() {
     getUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event: any, session: any) => {
         setUser(session?.user || null);
       }
     );
