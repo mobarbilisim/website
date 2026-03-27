@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart, Users, Settings,
-  Globe, Package, Home, ChevronRight, LogOut, Menu, X
+  Globe, Package, Home, ChevronRight, LogOut, Menu, X, BookOpen, List
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,8 @@ import { useState } from "react";
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/admin/products", icon: Package, label: "Ürünler" },
+  { href: "/admin/categories", icon: List, label: "Kategoriler" },
+  { href: "/admin/blog", icon: BookOpen, label: "Blog Yazıları" },
   { href: "/admin/orders", icon: ShoppingCart, label: "Siparişler" },
   { href: "/admin/users", icon: Users, label: "Müşteriler" },
   { href: "/admin/homepage", icon: Home, label: "Anasayfa İçerik" },
@@ -91,22 +93,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
             </li>
           ))}
-          {/* Yeni: Kategoriler Navigasyon Öğesi */}
-          <li>
-             <Link
-                href="/admin/categories"
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive("/admin/categories")
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`}
-              >
-                <Settings size={18} />
-                Kategoriler
-                {isActive("/admin/categories") && <ChevronRight size={14} className="ml-auto" />}
-              </Link>
-          </li>
         </ul>
       </nav>
 
