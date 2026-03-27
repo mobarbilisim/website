@@ -54,7 +54,7 @@ export default function AdminIndicator() {
       if (timeoutId) clearTimeout(timeoutId);
       events.forEach((event) => window.removeEventListener(event, activityListener));
     };
-  }, [isAdmin, router, supabase.auth]);
+  }, [pathname, isAdmin, router, supabase.auth]);
 
   if (!isAdmin || isInsideAdmin) return null;
 

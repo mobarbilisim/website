@@ -104,19 +104,17 @@ export default function Header() {
             {/* Right Actions */}
             <div className="hidden md:flex items-center gap-6">
               {user ? (
-                <div className="flex items-center gap-3 group relative cursor-pointer">
-                  <Link href="/hesabim" className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition">
-                      <User size={20} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-gray-900 leading-tight truncate max-w-[120px] hover:text-blue-600 transition">
-                        {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                      </span>
-                    </div>
-                  </Link>
-                  <button onClick={handleLogout} className="text-xs text-red-500 font-medium hover:underline self-end pb-0.5 ml-2">Çıkış</button>
-                </div>
+                <Link href="/hesabim" className="flex items-center gap-3 group border border-transparent hover:border-gray-200 hover:bg-gray-50 px-3 py-1.5 rounded-2xl transition">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400 flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:shadow-md transition">
+                    {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase() || "M"}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition">Hesabım</span>
+                    <span className="text-xs font-medium text-gray-500 truncate max-w-[100px]">
+                      {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+                    </span>
+                  </div>
+                </Link>
               ) : (
                 <Link href="/giris" className="flex items-center gap-3 group">
                   <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition text-gray-700 group-hover:text-blue-600">
