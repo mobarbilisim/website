@@ -9,6 +9,7 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Form state
@@ -28,7 +29,7 @@ export default function AdminProductsPage() {
     if (pData) setProducts(pData);
     if (cData) {
       setCategories(cData);
-      if (cData.length > 0) setCategoryId(cData[0].id.toString());
+      if (cData.length > 0 && !categoryId) setCategoryId(cData[0].id.toString());
     }
     setLoading(false);
   };
@@ -56,28 +57,69 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleAddProduct = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setTitle("");
+    setPrice("");
+    setStock("1");
+    setDescription("");
+    setImageUrl("");
+    setCondition("2.El");
+    setEditingId(null);
+    setIsAdding(false);
+  };
+
+  const handleEditClick = (product: any) => {
+    setEditingId(product.id);
+    setTitle(product.title);
+    setPrice(product.price.toString());
+    setStock(product.stock.toString());
+    setDescription(product.description || "");
+    setCategoryId(product.category_id.toString());
+    setCondition(product.condition);
+    setImageUrl(product.image_url || "");
+    setIsAdding(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !price) return alert("Başlık ve fiyat zorunludur.");
     
-    const { error } = await supabase.from("products").insert([
-      { 
-        title, 
-        price: parseFloat(price), 
-        description, 
-        category_id: parseInt(categoryId), 
-        condition, 
-        stock: parseInt(stock),
-        image_url: imageUrl
-      }
-    ]);
+    const productData = { 
+      title, 
+      price: parseFloat(price), 
+      description, 
+      category_id: parseInt(categoryId), 
+      condition, 
+      stock: parseInt(stock),
+      image_url: imageUrl
+    };
 
-    if (!error) {
-      setIsAdding(false);
-      setTitle(""); setPrice(""); setStock("1"); setDescription(""); setImageUrl("");
-      fetchData();
+    if (editingId) {
+      // Güncelleme
+      const { error } = await supabase
+        .from("products")
+        .update(productData)
+        .eq("id", editingId);
+      
+      if (!error) {
+        resetForm();
+        fetchData();
+      } else {
+        alert("Güncelleme hatası: " + error.message);
+      }
     } else {
-      alert("Hata: " + error.message);
+      // Yeni Ekleme
+      const { error } = await supabase
+        .from("products")
+        .insert([productData]);
+
+      if (!error) {
+        resetForm();
+        fetchData();
+      } else {
+        alert("Ekleme hatası: " + error.message);
+      }
     }
   };
 
@@ -97,7 +139,7 @@ export default function AdminProductsPage() {
         </div>
         {!isAdding && (
           <button 
-            onClick={() => setIsAdding(true)}
+            onClick={() => { resetForm(); setIsAdding(true); }}
             className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition text-sm shadow-sm"
           >
             <Plus size={18} /> Yeni Ürün Ekle
@@ -105,17 +147,19 @@ export default function AdminProductsPage() {
         )}
       </div>
 
-      {/* Add Product Form */}
+      {/* Form Section (Add or Edit) */}
       {isAdding && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 ring-2 ring-blue-500/10">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Yeni Ürün Ekle</h3>
-            <button onClick={() => setIsAdding(false)} className="text-gray-400 hover:text-gray-600 p-1">
+            <h3 className="text-lg font-bold text-gray-900">
+              {editingId ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
+            </h3>
+            <button onClick={resetForm} className="text-gray-400 hover:text-gray-600 p-1">
               <X size={20} />
             </button>
           </div>
           
-          <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Image */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Ürün Görseli</label>
@@ -187,8 +231,8 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="md:col-span-2">
-              <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition shadow-sm text-sm">
-                Ürünü Kaydet ve Yayınla
+              <button type="submit" className={`w-full ${editingId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-semibold py-3 rounded-lg transition shadow-sm text-sm`}>
+                {editingId ? "Değişiklikleri Kaydet" : "Ürünü Kaydet ve Yayınla"}
               </button>
             </div>
           </form>
@@ -244,8 +288,19 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 font-bold text-gray-900 text-sm">₺{item.price.toLocaleString('tr-TR')}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button onClick={() => handleDelete(item.id)} className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors">
+                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => handleEditClick(item)} 
+                        className="text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Düzenle"
+                      >
+                        <Edit3 size={16} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item.id)} 
+                        className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Sil"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </td>

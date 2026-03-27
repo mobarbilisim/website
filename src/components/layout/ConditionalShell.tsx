@@ -1,11 +1,21 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import { ReactNode } from "react";
 
-export default function ConditionalShell({ children }: { children: React.ReactNode }) {
+interface ConditionalShellProps {
+  children: ReactNode;
+  header: ReactNode;
+  footer: ReactNode;
+  whatsappButton: ReactNode;
+}
+
+export default function ConditionalShell({ 
+  children, 
+  header, 
+  footer, 
+  whatsappButton 
+}: ConditionalShellProps) {
   const pathname = usePathname();
   
   // Admin sayfalarında Header, Footer ve WhatsApp butonu gösterilmez
@@ -17,12 +27,12 @@ export default function ConditionalShell({ children }: { children: React.ReactNo
 
   return (
     <>
-      <Header />
+      {header}
       <main className="flex-1 flex flex-col">
         {children}
       </main>
-      <WhatsAppButton />
-      <Footer />
+      {whatsappButton}
+      {footer}
     </>
   );
 }

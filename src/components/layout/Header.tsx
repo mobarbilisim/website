@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse, Smartphone, Code } from "lucide-react";
+import { Search, User, Heart, ShoppingCart, Menu, X, Monitor, Laptop, Cpu, Mouse, Smartphone, Code, BookOpen, Info } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/components/providers/CartProvider";
@@ -42,7 +42,7 @@ export default function Header() {
     getUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event: any, session: any) => {
         setUser(session?.user || null);
       }
     );
@@ -241,6 +241,8 @@ export default function Header() {
                   <Link href="/hesabim" onClick={() => setIsMobileMenuOpen(false)} className="font-bold text-gray-900 truncate max-w-[200px] hover:text-blue-600">
                     {user.user_metadata?.full_name || user.email?.split("@")[0]}
                   </Link>
+                  <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Blog</Link>
+                  <Link href="/hakkimizda" onClick={() => setIsMobileMenuOpen(false)} className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Hakkımızda</Link>
                   <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="text-sm font-semibold text-red-500 text-left mt-1 hover:underline">Çıkış Yap</button>
                 </div>
               </div>
@@ -253,6 +255,21 @@ export default function Header() {
               </div>
             )}
             
+            <ul className="space-y-1 mb-8">
+              <li>
+                <Link href="/blog" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium text-gray-800">
+                  <BookOpen size={20} className="text-gray-500" />
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/hakkimizda" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium text-gray-800">
+                  <Info size={20} className="text-gray-500" />
+                  Hakkımızda
+                </Link>
+              </li>
+            </ul>
+
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Kategoriler</h3>
             <ul className="space-y-1">
               {topCategories.map((category, idx) => {
