@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     `;
 
     // Admin'e e-posta gönder
-    const adminEmail = process.env.ADMIN_EMAIL || "info@mobarbilisim.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "mobarbilisim@gmail.com";
     
     const { data, error } = await resend.emails.send({
       from: "Mobar Bilişim <onboarding@resend.dev>",
