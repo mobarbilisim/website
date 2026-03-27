@@ -25,14 +25,43 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const supabase = createClient();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  const isLoginPage = pathname === "/admin/login";
+
+  useState(() => {
+    async function checkUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user && !isLoginPage) {
+        router.push("/admin/login");
+      } else {
+        setIsCheckingAuth(false);
+      }
+    }
+    checkUser();
+  });
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/giris");
+    router.push("/admin/login");
     router.refresh();
   };
 
   const isActive = (href: string) => href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+
+  // Eğer giriş sayfasındaysak sadece içeriği döndür
+  if (isLoginPage) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        {children}
+      </div>
+    );
+  }
+
+  // Yükleniyor durumu (Sıçramayı önlemek için)
+  if (isCheckingAuth && !isLoginPage) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-400 font-medium">Yönetim Paneli Yükleniyor...</div>;
+  }
 
   const SidebarContent = () => (
     <>
@@ -62,6 +91,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
             </li>
           ))}
+          {/* Yeni: Kategoriler Navigasyon Öğesi */}
+          <li>
+             <Link
+                href="/admin/categories"
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  isActive("/admin/categories")
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                <Settings size={18} />
+                Kategoriler
+                {isActive("/admin/categories") && <ChevronRight size={14} className="ml-auto" />}
+              </Link>
+          </li>
         </ul>
       </nav>
 
@@ -115,9 +160,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Aktif
+              Aktif Seans
             </span>
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">M</div>
+            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold ring-2 ring-white">A</div>
           </div>
         </header>
 
