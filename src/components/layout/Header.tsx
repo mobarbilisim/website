@@ -28,7 +28,15 @@ export default function Header() {
     }
   };
 
+  const [categories, setCategories] = useState<any[]>([]);
+
   useEffect(() => {
+    const fetchCats = async () => {
+      const { data } = await supabase.from("categories").select("*");
+      if (data) setCategories(data);
+    };
+    fetchCats();
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -51,7 +59,7 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -59,13 +67,9 @@ export default function Header() {
     router.refresh();
   };
 
-  const topCategories = [
-    { name: "Yazılım Çözümleri", icon: Code, href: "/category/yazilim-cozumleri" },
+  const staticLinks = [
     { name: "Sıfır Ürünler", icon: Laptop, href: "/sifir-urunler" },
     { name: "2. El Ürünler", icon: Monitor, href: "/ikinci-el-urunler" },
-    { name: "Bileşenler & Aksesuarlar", icon: Cpu, href: "/category/bilesenler-ve-aksesuarlar" },
-    { name: "Çevre Birimleri", icon: Mouse, href: "/category/bilesenler-ve-aksesuarlar" },
-    { name: "Telefonlar", icon: Smartphone, href: "/category/telefonlar" },
   ];
 
   return (
@@ -198,23 +202,67 @@ export default function Header() {
       {/* Categories Desktop Bar */}
       <div className="hidden md:block bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ul className="flex items-center justify-between overflow-x-auto py-2">
-            {topCategories.map((category, index) => {
-              const Icon = category.icon;
-              const isActive = pathname === category.href || pathname.startsWith(category.href + "/");
+          <ul className="flex items-center justify-center gap-2 overflow-x-auto py-2">
+            
+            {/* Static Links */}
+            {staticLinks.map((link, index) => {
+              const Icon = link.icon;
+              const isActive = pathname === link.href;
               return (
-                <li key={index}>
+                <li key={`static-${index}`}>
                   <Link 
-                    href={category.href}
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}
-                    className={`flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-blue-50 group min-w-[100px] transition-colors relative ${isActive ? 'bg-blue-50/80' : ''}`}
+                    href={link.href}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-lg hover:bg-blue-50 group min-w-[110px] transition-colors relative ${isActive ? 'bg-blue-50/80 text-blue-700' : 'text-gray-700'}`}
                   >
-                    <Icon size={24} className={`transition-colors ${isActive ? 'text-blue-600' : 'text-gray-600 group-hover:text-blue-600'}`} strokeWidth={1.5} />
-                    <span className={`text-xs font-semibold whitespace-nowrap ${isActive ? 'text-blue-700' : 'text-gray-700 group-hover:text-blue-700'}`}>
+                    <Icon size={22} className={`transition-colors ${isActive ? 'text-blue-600' : 'group-hover:text-blue-600'}`} strokeWidth={1.5} />
+                    <span className="text-xs font-bold whitespace-nowrap group-hover:text-blue-700 transition">
+                      {link.name}
+                    </span>
+                    {isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-t-full"></span>}
+                  </Link>
+                </li>
+              )
+            })}
+
+            {/* Dynamic Parent Categories & Subcategories */}
+            {categories.filter(c => !c.parent_id).map((category) => {
+              const subCats = categories.filter(sub => sub.parent_id === category.id);
+              const categorySlug = category.slug || category.name.toLowerCase().replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/ü/g, 'u').replace(/\s+/g, '-');
+              const isActive = pathname.includes(`/category/${categorySlug}`);
+              
+              return (
+                <li key={`cat-${category.id}`} className="relative group">
+                  <Link 
+                    href={`/category/${categorySlug}`}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-lg hover:bg-blue-50 transition-colors relative ${isActive ? 'bg-blue-50/80 text-blue-700' : 'text-gray-700'}`}
+                  >
+                    <Cpu size={22} className={`transition-colors ${isActive ? 'text-blue-600' : 'group-hover:text-blue-600'}`} strokeWidth={1.5} />
+                    <span className="text-xs font-bold whitespace-nowrap group-hover:text-blue-700 transition">
                       {category.name}
                     </span>
                     {isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-t-full"></span>}
                   </Link>
+
+                  {/* Dropdown Menu for Subcategories */}
+                  {subCats.length > 0 && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-56 bg-white shadow-2xl rounded-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-1 transition-all z-50 overflow-hidden transform">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-blue-600"></div>
+                      <div className="p-2">
+                        {subCats.map(sub => {
+                          const subSlug = sub.slug || sub.name.toLowerCase().replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/ü/g, 'u').replace(/\s+/g, '-');
+                          return (
+                            <Link 
+                              key={sub.id} 
+                              href={`/category/${subSlug}`} 
+                              className="block px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors border-b border-gray-50 last:border-0"
+                            >
+                              {sub.name}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </li>
               )
             })}
@@ -270,23 +318,39 @@ export default function Header() {
 
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Kategoriler</h3>
             <ul className="space-y-1">
-              {topCategories.map((category, idx) => {
-                const Icon = category.icon;
-                const isActive = pathname === category.href || pathname.startsWith(category.href + "/");
-                return (
-                  <li key={idx}>
-                    <Link 
-                      href={category.href} 
-                      onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
-                      className={`flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-800'}`}
-                    >
-                      <Icon size={20} className={isActive ? "text-blue-600" : "text-gray-500"} />
-                      {category.name}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
+              {staticLinks.map((link, idx) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+              return (
+                <li key={`mobile-static-${idx}`}>
+                  <Link 
+                    href={link.href} 
+                    onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+                    className={`flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-800'}`}
+                  >
+                    <Icon size={20} className={isActive ? "text-blue-600" : "text-gray-500"} />
+                    {link.name}
+                  </Link>
+                </li>
+              )
+            })}
+            {categories.filter(c => !c.parent_id).map((category) => {
+              const categorySlug = category.slug || category.name.toLowerCase().replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/ü/g, 'u').replace(/\s+/g, '-');
+              const isActive = pathname.includes(`/category/${categorySlug}`);
+              return (
+                <li key={`mobile-cat-${category.id}`}>
+                  <Link 
+                    href={`/category/${categorySlug}`} 
+                    onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+                    className={`flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 font-medium ${isActive ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-800'}`}
+                  >
+                    <Cpu size={20} className={isActive ? "text-blue-600" : "text-gray-500"} />
+                    {category.name}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
           </div>
         </>
       )}
