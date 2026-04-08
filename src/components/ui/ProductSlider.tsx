@@ -44,7 +44,7 @@ export default function ProductSlider({ title, subtitle, products = [] }: { titl
   if (!products || products.length === 0) return null;
 
   return (
-    <section className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12 relative">
+    <section className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-12 relative">
       
       {/* Title Area */}
       <div className="flex flex-col md:flex-row items-center justify-center md:justify-between mb-8 pb-4 border-b-2 border-blue-500">

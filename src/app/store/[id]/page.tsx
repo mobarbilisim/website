@@ -60,7 +60,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-100 mb-8">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center gap-2 text-sm font-medium text-gray-500">
             <Link href="/" className="hover:text-blue-600 transition">Anasayfa</Link>
             <ChevronRight size={14} />
@@ -71,7 +71,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl p-6 md:p-12 shadow-sm border border-gray-100 mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             

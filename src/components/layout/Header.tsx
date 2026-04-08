@@ -69,7 +69,7 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
     <header className="w-full bg-white z-50">
       {/* Top Header */}
       <div className="border-b border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+        <div className="max-w-[1700px] mx-auto px-3 sm:px-5 lg:px-8 py-4 md:py-5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
             
             <div className="w-full md:w-auto flex items-center justify-between">
@@ -77,9 +77,9 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
                 <Image
                   src="/logo.png"
                   alt="Mobar Bilişim Logo"
-                  width={340}
-                  height={90}
-                  className="h-20 md:h-24 w-auto object-contain"
+                  width={520}
+                  height={130}
+                  className="h-24 md:h-32 w-auto object-contain"
                   priority
                 />
               </Link>
@@ -113,49 +113,49 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
               </button>
             </form>
 
-            <div className="hidden md:flex items-center gap-6 lg:gap-8">
+            <div className="hidden md:flex items-center gap-7 lg:gap-10">
               {user ? (
                 <Link href={user.user_metadata?.role === 'admin' || user.email === 'mobarbilisim@gmail.com' ? '/admin' : '/hesabim'} className="flex items-center gap-3 group cursor-pointer">
-                  <div className="w-9 h-9 rounded-full border border-blue-500 flex items-center justify-center text-blue-600 font-bold bg-blue-50">
+                  <div className="w-11 h-11 rounded-full border-2 border-blue-500 flex items-center justify-center text-blue-600 font-bold bg-blue-50 text-base">
                      {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase() || "M"}
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition">Hesabım</span>
-                    <span className="text-xs text-gray-500 truncate max-w-[100px]">
+                    <span className="text-base font-bold text-gray-900 group-hover:text-blue-600 transition">Hesabım</span>
+                    <span className="text-sm text-gray-500 truncate max-w-[120px]">
                       {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
                     </span>
                   </div>
                 </Link>
               ) : (
                 <Link href="/giris" className="flex items-center gap-3 group cursor-pointer">
-                  <User size={24} className="text-gray-700 group-hover:text-blue-500 transition" />
+                  <User size={30} className="text-gray-700 group-hover:text-blue-500 transition" />
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-gray-900 group-hover:text-blue-500 transition">Giriş Yap</span>
-                    <span className="text-xs text-gray-500">Üye Ol</span>
+                    <span className="text-base font-bold text-gray-900 group-hover:text-blue-500 transition">Giriş Yap</span>
+                    <span className="text-sm text-gray-500">Üye Ol</span>
                   </div>
                 </Link>
               )}
-              
+
               <Link href="/favorites" className="flex items-center gap-3 group cursor-pointer">
                 <div className="relative">
-                  <Heart size={24} className="text-gray-700 group-hover:text-blue-500 transition" />
+                  <Heart size={30} className="text-gray-700 group-hover:text-blue-500 transition" />
                   {totalFavorites > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                       {totalFavorites}
                     </span>
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-bold text-gray-900 group-hover:text-blue-500 transition">Favori</span>
-                  <span className="text-xs text-gray-500">Ürünlerim</span>
+                  <span className="text-base font-bold text-gray-900 group-hover:text-blue-500 transition">Favori</span>
+                  <span className="text-sm text-gray-500">Ürünlerim</span>
                 </div>
               </Link>
 
-              <div className="h-8 w-[1.5px] bg-gray-200"></div>
+              <div className="h-10 w-[1.5px] bg-gray-200"></div>
 
               <Link href="/cart" className="flex items-center gap-3 group cursor-pointer">
                 <div className="relative">
-                  <ShoppingCart size={28} className="text-gray-700 group-hover:text-blue-500 transition" />
+                  <ShoppingCart size={34} className="text-gray-700 group-hover:text-blue-500 transition" />
                   {totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
                       {totalItems}
@@ -163,8 +163,8 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-bold text-gray-900 group-hover:text-blue-500 transition">Sepetim</span>
-                  <span className="text-xs text-gray-500 font-bold">{totalPrice.toLocaleString('tr-TR')} ₺</span>
+                  <span className="text-base font-bold text-gray-900 group-hover:text-blue-500 transition">Sepetim</span>
+                  <span className="text-sm text-gray-500 font-bold">{totalPrice.toLocaleString('tr-TR')} ₺</span>
                 </div>
               </Link>
             </div>
@@ -191,7 +191,7 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
       {/* Category Icons Bar (Desktop) */}
       {categories.length > 0 && (
          <div className="hidden md:block bg-white shadow-sm border-b border-gray-100 relative">
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
                <ul className="flex flex-wrap items-center justify-center gap-x-10 lg:gap-x-14 gap-y-4 py-4">
                   {categories.filter((c: any) => !c.parent_id).map((cat, idx) => {
                      const subCats = categories.filter((c: any) => c.parent_id === cat.id);

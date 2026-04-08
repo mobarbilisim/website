@@ -80,7 +80,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     <div className="bg-gray-50 flex-1 min-h-screen">
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center gap-2 text-sm font-medium text-gray-500">
             <Link href="/" className="hover:text-blue-600 transition">Anasayfa</Link>
             <ChevronRight size={14} />
@@ -99,7 +99,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Başlık */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">

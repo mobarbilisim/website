@@ -5,7 +5,7 @@ export default function PromoBanners({ banners = [] }: { banners: any[] }) {
   if (!banners || banners.length === 0) return null;
 
   return (
-    <section className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <section className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
       <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(banners.length, 4)} gap-4 lg:gap-6`}>
         {banners.map((banner, idx) => (
           <Link href={banner.link || '#'} key={idx} className={`block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 relative group bg-gradient-to-br ${banner.bg} text-white`}>
