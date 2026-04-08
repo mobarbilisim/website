@@ -1,4 +1,3 @@
-import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
 
 function escapeHtml(str: string): string {
@@ -14,9 +13,30 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-export async function POST(req: NextRequest) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+async function sendBrevoEmail(to: string, subject: string, htmlContent: string, replyTo?: string) {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": process.env.BREVO_API_KEY || "",
+    },
+    body: JSON.stringify({
+      sender: { name: "Mobar Bilişim", email: "mobarbilisim@gmail.com" },
+      to: [{ email: to }],
+      ...(replyTo ? { replyTo: { email: replyTo } } : {}),
+      subject,
+      htmlContent,
+    }),
+  });
 
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Brevo hata: ${err}`);
+  }
+  return res.json();
+}
+
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { name, email, subject, message } = body;
@@ -38,41 +58,33 @@ export async function POST(req: NextRequest) {
 
     const adminEmail = process.env.ADMIN_EMAIL || "mobarbilisim@gmail.com";
 
-    const { error } = await resend.emails.send({
-      from: "Mobar Bilisim <onboarding@resend.dev>",
-      to: [adminEmail],
-      replyTo: email.trim(),
-      subject: `İletişim Formu: ${safeSubject} — ${safeName}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;padding:32px;border-radius:12px">
-          <h2 style="color:#1e3a5f;margin-bottom:24px;font-size:20px">📬 Yeni İletişim Formu Mesajı</h2>
-          <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07)">
-            <tr>
-              <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;width:140px;font-size:13px">Ad Soyad</td>
-              <td style="padding:12px 16px;color:#1f2937;font-size:14px">${safeName}</td>
-            </tr>
-            <tr>
-              <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;font-size:13px">E-Posta</td>
-              <td style="padding:12px 16px;color:#1f2937;font-size:14px">${safeEmail}</td>
-            </tr>
-            <tr>
-              <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;font-size:13px">Konu</td>
-              <td style="padding:12px 16px;color:#1f2937;font-size:14px">${safeSubject}</td>
-            </tr>
-            <tr>
-              <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;vertical-align:top;font-size:13px">Mesaj</td>
-              <td style="padding:12px 16px;color:#1f2937;font-size:14px;line-height:1.6">${safeMessage}</td>
-            </tr>
-          </table>
-          <p style="margin-top:24px;font-size:12px;color:#9ca3af">Bu e-posta Mobar Bilişim iletişim formu üzerinden gönderilmiştir. Yanıtlamak için doğrudan bu e-postayı cevaplayabilirsiniz.</p>
-        </div>
-      `,
-    });
-
-    if (error) {
-      console.error("Contact email error:", error);
-      return NextResponse.json({ error: "E-posta gönderilemedi" }, { status: 500 });
-    }
+    await sendBrevoEmail(
+      adminEmail,
+      `📬 İletişim Formu: ${safeSubject} — ${safeName}`,
+      `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;padding:32px;border-radius:12px">
+        <h2 style="color:#1e3a5f;margin-bottom:24px;font-size:20px">📬 Yeni İletişim Formu Mesajı</h2>
+        <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07)">
+          <tr>
+            <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;width:140px;font-size:13px">Ad Soyad</td>
+            <td style="padding:12px 16px;color:#1f2937;font-size:14px">${safeName}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;font-size:13px">E-Posta</td>
+            <td style="padding:12px 16px;color:#1f2937;font-size:14px">${safeEmail}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;font-size:13px">Konu</td>
+            <td style="padding:12px 16px;color:#1f2937;font-size:14px">${safeSubject}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;background:#f0f4ff;font-weight:bold;color:#374151;vertical-align:top;font-size:13px">Mesaj</td>
+            <td style="padding:12px 16px;color:#1f2937;font-size:14px;line-height:1.6">${safeMessage}</td>
+          </tr>
+        </table>
+        <p style="margin-top:24px;font-size:12px;color:#9ca3af">Bu e-posta Mobar Bilişim iletişim formu üzerinden gönderilmiştir.</p>
+      </div>`,
+      email.trim()
+    );
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
