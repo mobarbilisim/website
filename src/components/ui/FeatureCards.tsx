@@ -42,7 +42,11 @@ export default function FeatureCards({ cards }: { cards: any[] }) {
                   {card.features?.[0]?.replace('•','').trim()}
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-black uppercase leading-tight mb-4 drop-shadow-xl tracking-tight" dangerouslySetInnerHTML={{ __html: card.title }} />
+                <h3 className="text-2xl md:text-3xl font-black uppercase leading-tight mb-4 drop-shadow-xl tracking-tight">
+                  {card.title.split(/<br\s*\/?>/i).map((part: string, i: number) => (
+                    <span key={i}>{i > 0 && <br />}{part}</span>
+                  ))}
+                </h3>
 
                 <ul className="space-y-2 flex-1 mb-6">
                   {card.features?.slice(1).map((feat: string, fIdx: number) => (

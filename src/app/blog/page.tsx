@@ -60,10 +60,9 @@ export default async function BlogPage() {
                   <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
                     {blog.title}
                   </h2>
-                  <div 
-                    className="text-gray-500 text-sm line-clamp-3 mb-6"
-                    dangerouslySetInnerHTML={{ __html: blog.content }} 
-                  />
+                  <p className="text-gray-500 text-sm line-clamp-3 mb-6">
+                    {blog.content.replace(/<[^>]*>/g, '').substring(0, 200)}
+                  </p>
                   <div className="mt-auto flex items-center gap-2 text-sm font-bold text-blue-600 group-hover:translate-x-2 transition-transform">
                     Devamını Oku <ArrowRight size={16} />
                   </div>
