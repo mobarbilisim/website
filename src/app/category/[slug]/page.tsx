@@ -1,98 +1,201 @@
 import { createClient } from "@/lib/supabase/server";
-import Image from "next/image";
 import Link from "next/link";
-import AddToCartButton from "@/components/ui/AddToCartButton";
-import FavoriteButton from "@/components/ui/FavoriteButton";
+import ProductCard from "@/components/ui/ProductCard";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const supabase = await createClient();
+  const { data: categories } = await supabase.from("categories").select("id, name, slug");
+  const cat = categories?.find((c: any) => c.slug === resolvedParams.slug);
+  
+  return {
+    title: `${cat?.name || resolvedParams.slug.replace(/-/g, ' ')} - Mobar Bilişim`,
+    description: `${cat?.name || ''} kategorisindeki tüm ürünleri uygun fiyatlarla Mobar Bilişim'de inceleyin.`,
+  };
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
-  const formattedTitle = slug.replace(/-/g, ' ').toUpperCase();
   
   const supabase = await createClient();
 
-  // Try to find the category by slug OR name matches the un-slugged version
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name, slug");
+  // Tüm kategorileri çek
+  const { data: allCategories } = await supabase.from("categories").select("*");
+  const categories = allCategories || [];
 
-  const currentCategory = categories?.find(c => c.slug === slug) 
-    || categories?.find(c => c.name.toLowerCase() === formattedTitle.toLowerCase() || c.name.toLowerCase().replace(/\s+/g, '-') === slug);
-
-  let products: any[] = [];
-  let errorMsg = null;
-
-  if (currentCategory) {
-    // Kategori bulundu, şimdi ürünleri çekelim
-    const { data: dbProducts, error } = await supabase
-      .from("products")
-      .select("*, categories(name)")
-      .eq("category_id", currentCategory.id);
-
-    if (error) {
-      errorMsg = "Ürünler yüklenirken bir hata oluştu.";
-    } else {
-      products = dbProducts || [];
-    }
-  } else {
-    // Özel durumlar için fallback (Kategori DB'de yoksa ama slug varsa, ilike ile ürün başlıklarında veya eski mantıkla arayabiliriz)
-    // Mesela "Bileşenler ve Aksesuarlar" için manuel getirme yapmak istersek:
-    const { data: dbProducts } = await supabase
-      .from("products")
-      .select("*, categories(name)");
-      
-    // Eğer kategori tablosunda bulamadıysa, ürünlerin kategorilerinde bu isme benzer (ilike) arayalım
-    if (dbProducts) {
-       products = dbProducts.filter(p => 
-         p.categories?.name?.toLowerCase().includes(formattedTitle.toLowerCase().split(' ')[0])
-       );
-    }
+  // Slug ile kategoriyi bul
+  const currentCategory = categories.find((c: any) => c.slug === slug);
+  
+  if (!currentCategory) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-20 text-center bg-gray-50 min-h-screen">
+        <span className="text-6xl mb-6">🔍</span>
+        <h1 className="text-3xl font-black mb-4 text-gray-900">Kategori Bulunamadı</h1>
+        <p className="text-gray-500 mb-8 max-w-md">Aradığınız kategori silinmiş veya bağlantı hatalı olabilir.</p>
+        <Link href="/store" className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+          Mağazaya Dön
+        </Link>
+      </div>
+    );
   }
+
+  // Bu bir ana kategori mi yoksa alt kategori mi?
+  const isParent = !currentCategory.parent_id;
+  
+  // Alt kategorilerini bul (sadece ana kategori ise)
+  const subCategories = isParent 
+    ? categories.filter((c: any) => c.parent_id === currentCategory.id)
+    : [];
+
+  // Eğer bu bir ana kategori ise: Hem kendi ürünlerini hem alt kategorilerdeki ürünleri getir
+  // Eğer bu bir alt kategori ise: Sadece kendi ürünlerini getir ve kardeş kategorileri sidebar'da göster
+  const categoryIds: number[] = [currentCategory.id];
+  if (isParent) {
+    subCategories.forEach((sub: any) => categoryIds.push(sub.id));
+  }
+
+  const { data: products } = await supabase
+    .from("products")
+    .select("*, categories(name, id)")
+    .in("category_id", categoryIds)
+    .order("created_at", { ascending: false });
+
+  const allProducts = products || [];
+
+  // Sidebar için: eğer alt kategori ise üst kategorisini ve kardeşlerini bul
+  let parentCategory = currentCategory;
+  let sidebarSubs = subCategories;
+  
+  if (!isParent) {
+    parentCategory = categories.find((c: any) => c.id === currentCategory.parent_id) || currentCategory;
+    sidebarSubs = categories.filter((c: any) => c.parent_id === parentCategory.id);
+  }
+
+  // Her alt kategorideki ürün sayısını hesapla
+  const getSubCount = (catId: number) => allProducts.filter((p: any) => p.category_id === catId).length;
 
   return (
     <div className="bg-gray-50 flex-1 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-extrabold mb-8 text-gray-900 border-b pb-4">
-          <span className="text-blue-600">{currentCategory?.name || formattedTitle}</span> 
-          <span className="text-lg text-gray-500 font-medium ml-4">({products.length} Ürün)</span>
-        </h1>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {!products || products.length === 0 ? (
-            <div className="col-span-full py-32 flex flex-col items-center justify-center text-gray-500 bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <span className="text-6xl mb-4">📦</span>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">Bu kategoride henüz ürün yok</h3>
-              <p>Mobar Bilişim yakında bu kategoriye yepyeni ürünler ekleyecektir.</p>
-            </div>
-          ) : (
-            products.map((product) => (
-              <div key={product.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between">
-                <div>
-                  <Link href={`/store/${product.id}`} className="block relative w-full h-48 bg-gray-50 rounded-xl mb-4 flex items-center justify-center text-gray-300 overflow-hidden group-hover:shadow-md transition">
-                    <FavoriteButton product={product} />
-                    {product.image_url ? (
-                      <Image src={product.image_url} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      "Görsel Yok"
-                    )}
-                    <div className="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase z-10">
-                      {product.condition}
-                    </div>
-                  </Link>
-                  <div className="text-xs text-blue-600 font-bold mb-1">{((product as any).categories)?.name || 'Kategorisiz'}</div>
-                  <Link href={`/store/${product.id}`}>
-                    <h3 className="font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors line-clamp-2" title={product.title}>{product.title}</h3>
-                  </Link>
-                  <p className="text-xs text-gray-500 line-clamp-2 mb-4">{product.description}</p>
+      {/* Breadcrumbs */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <nav className="flex items-center gap-2 text-sm font-medium text-gray-500">
+            <Link href="/" className="hover:text-blue-600 transition">Anasayfa</Link>
+            <ChevronRight size={14} />
+            <Link href="/store" className="hover:text-blue-600 transition">Mağaza</Link>
+            <ChevronRight size={14} />
+            {!isParent && parentCategory.id !== currentCategory.id && (
+              <>
+                <Link href={`/category/${parentCategory.slug}`} className="hover:text-blue-600 transition">
+                  {parentCategory.name}
+                </Link>
+                <ChevronRight size={14} />
+              </>
+            )}
+            <span className="text-gray-900 font-bold">{currentCategory.name}</span>
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Başlık */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
+            {currentCategory.name}
+          </h1>
+          <p className="text-gray-500 mt-2 text-sm">
+            {isParent && subCategories.length > 0 
+              ? `${subCategories.length} alt kategori ve toplam ${allProducts.length} ürün listeleniyor.`
+              : `${allProducts.length} ürün listeleniyor.`
+            }
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Sol Sidebar — Kategori Filtresi */}
+          {sidebarSubs.length > 0 && (
+            <aside className="w-full lg:w-72 shrink-0">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden sticky top-28">
+                <div className="px-5 py-4 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <SlidersHorizontal size={16} className="text-blue-600" />
+                  <h3 className="font-black text-sm text-gray-900 uppercase tracking-wider">
+                    {parentCategory.name}
+                  </h3>
                 </div>
                 
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                  <div className="text-lg font-bold">{(product.price).toLocaleString('tr-TR')} ₺</div>
-                  <AddToCartButton product={product} />
+                <div className="p-3 space-y-1">
+                  {/* Tüm Ürünler Linki */}
+                  <Link
+                    href={`/category/${parentCategory.slug}`}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                      currentCategory.id === parentCategory.id && isParent
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
+                    }`}
+                  >
+                    <span>Tüm {parentCategory.name}</span>
+                    <span className={`text-xs font-black px-2 py-0.5 rounded-full ${
+                      currentCategory.id === parentCategory.id && isParent
+                        ? 'bg-white/20 text-white'
+                        : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      {allProducts.length}
+                    </span>
+                  </Link>
+
+                  <div className="h-px bg-gray-100 my-2"></div>
+
+                  {/* Alt Kategoriler */}
+                  {sidebarSubs.map((sub: any) => {
+                    const isActive = currentCategory.id === sub.id;
+                    const count = getSubCount(sub.id);
+                    return (
+                      <Link
+                        key={sub.id}
+                        href={`/category/${sub.slug}`}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                          isActive
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-blue-600' : 'bg-gray-300'}`}></span>
+                          {sub.name}
+                        </div>
+                        <span className={`text-[11px] font-black px-2 py-0.5 rounded-full ${
+                          isActive ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'
+                        }`}>
+                          {count}
+                        </span>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
-            ))
+            </aside>
           )}
+
+          {/* Sağ: Ürün Grid */}
+          <main className="flex-1">
+            {allProducts.length === 0 ? (
+              <div className="py-32 flex flex-col items-center justify-center text-gray-500 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <span className="text-6xl mb-4">📦</span>
+                <h3 className="text-xl font-bold text-gray-700 mb-2">Bu kategoride henüz ürün yok</h3>
+                <p className="text-sm text-gray-500 mb-6">Mobar Bilişim yakında bu kategoriye yepyeni ürünler ekleyecektir.</p>
+                <Link href="/store" className="text-blue-600 font-bold hover:underline">Tüm Ürünlere Göz At →</Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {allProducts.map((product: any) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </main>
         </div>
       </div>
     </div>

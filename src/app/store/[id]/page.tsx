@@ -4,7 +4,7 @@ import AddToCartButton from "@/components/ui/AddToCartButton";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import ProductCard from "@/components/ui/ProductCard";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, ChevronRight, Info } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ShieldCheck, Truck, ChevronRight, Info, ImageOff } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -77,16 +77,48 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             
             {/* Image Section */}
             <div className="space-y-4">
-              <div className="relative w-full aspect-square bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100 group">
-                {product.image_url ? (
-                  <Image src={product.image_url} alt={product.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div className="relative w-full aspect-square bg-gray-50 rounded-3xl flex items-center justify-center overflow-hidden border border-gray-100 group shadow-inner">
+                {product.images?.[0] || product.image_url ? (
+                  <Image src={product.images?.[0] || product.image_url} alt={product.title} fill className={`object-contain p-4 group-hover:scale-105 transition-transform duration-700 ${product.stock <= 0 ? 'grayscale' : ''}`} />
                 ) : (
-                  <div className="text-gray-400 font-medium text-center p-8">Bu ürün için görsel eklenmemiş</div>
+                  <div className="flex flex-col items-center justify-center text-gray-400 opacity-60">
+                    <ImageOff size={64} className="mb-4 text-gray-300" />
+                    <span className="text-sm font-bold uppercase tracking-widest text-gray-400">Görsel Yok</span>
+                  </div>
                 )}
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm border border-white/20 uppercase">
-                  {product.condition === 'new' ? 'Sıfır' : '2. El'}
-                </div>
+                
+                {product.badge && (
+                  <div className="absolute top-4 left-4 z-20">
+                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center text-[11px] font-black text-center leading-tight shadow-xl shadow-red-500/40 border-2 border-white">
+                       {product.badge}
+                     </div>
+                  </div>
+                )}
+
+                {/* Tükendi Blur Overlay */}
+                {product.stock <= 0 && (
+                  <div className="absolute inset-0 z-20 rounded-3xl overflow-hidden">
+                    <div className="absolute inset-0 backdrop-blur-md bg-white/30"></div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                      <span className="bg-red-600/90 text-white text-xl font-black uppercase px-10 py-4 rounded-2xl tracking-[0.25em] shadow-2xl border border-red-500/30">
+                        TÜKENDİ
+                      </span>
+                      <span className="text-sm font-bold text-gray-700">Bu ürün şu an stokta bulunmuyor</span>
+                    </div>
+                  </div>
+                )}
               </div>
+              
+              {/* Thumbnail Gallery */}
+              {product.images && product.images.length > 1 && (
+                <div className="grid grid-cols-5 gap-3">
+                  {product.images.map((img: string, i: number) => (
+                    <div key={i} className="aspect-square bg-white border border-gray-200 rounded-xl overflow-hidden relative cursor-pointer hover:border-blue-500 transition-colors">
+                      <Image src={img} alt={`${product.title} ${i+1}`} fill className="object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Details Section */}
@@ -116,22 +148,43 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 )}
               </div>
               
-              <div className="bg-gray-50 rounded-2xl p-6 mb-10 border border-gray-100">
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <Info size={16} className="text-blue-600" /> Ürün Açıklaması
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap">
-                  {product.description || "Bu ürün için henüz bir açıklama girilmemiş."}
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <div className="flex-1">
-                  <AddToCartButton product={product} /> 
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {product.features?.map((f: string, i: number) => (
+                    <span key={i} className="bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                      <CheckCircle2 size={12} className="text-blue-500"/> {f}
+                    </span>
+                  ))}
+                  {product.condition && !product.features?.includes(product.condition) && (
+                    <span className="bg-orange-50 border border-orange-100 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                      <Info size={12} className="text-orange-500"/> {product.condition}
+                    </span>
+                  )}
                 </div>
-                <div className="flex items-center justify-center p-3 px-6 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer group">
-                  <FavoriteButton product={product} />
-                  <span className="ml-3 text-sm font-bold text-gray-700 group-hover:text-blue-600">Favori</span>
+
+                <div className="bg-gray-50 rounded-2xl p-6 mb-10 border border-gray-100">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <Info size={16} className="text-blue-600" /> Ürün Açıklaması
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap">
+                    {product.description || "Bu ürün için henüz bir açıklama girilmemiş."}
+                  </p>
+                </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-10 h-[60px]">
+                <div className="flex-[2]">
+                  {product.stock <= 0 ? (
+                    <div className="w-full h-full flex items-center justify-center bg-red-50 border-2 border-red-200 rounded-xl">
+                      <span className="text-red-600 font-black text-base uppercase tracking-widest">Tükendi — Sepete Eklenemez</span>
+                    </div>
+                  ) : (
+                    <AddToCartButton product={product} className="w-full h-full py-0 text-base shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all rounded-xl" />
+                  )}
+                </div>
+                <div className="flex-1 flex items-center justify-center bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer group shadow-sm z-10 relative">
+                  <div className="flex items-center gap-2">
+                    <FavoriteButton product={product} />
+                    <span className="ml-[40px] text-sm font-extrabold text-gray-700 group-hover:text-red-500 transition-colors">Favorilere Ekle</span>
+                  </div>
                 </div>
               </div>
 
@@ -162,7 +215,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   </div>
                   <div>
                     <h4 className="text-xs font-black uppercase text-gray-900">Kondisyon</h4>
-                    <p className="text-[11px] text-gray-500 font-bold uppercase">{product.condition === 'new' ? 'Sıfır' : 'İkinci El'}</p>
+                    <p className="text-[11px] text-gray-500 font-bold uppercase line-clamp-1" title={product.condition || 'FIRSAT'}>
+                      {product.condition ? (product.condition === 'new' ? 'Sıfır' : product.condition) : 'FIRSAT'}
+                    </p>
                   </div>
                 </div>
               </div>

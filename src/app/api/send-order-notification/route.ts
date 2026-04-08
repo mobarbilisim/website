@@ -2,8 +2,15 @@ import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
+    const apiKey = process.env.RESEND_API_KEY;
+    
+    if (!apiKey) {
+      console.error("RESEND_API_KEY çevre değişkeni tanımlanmamış!");
+      return NextResponse.json({ error: "E-posta servis anahtarı eksik" }, { status: 500 });
+    }
+
+    const resend = new Resend(apiKey);
     const body = await req.json();
     const { orderId, customerName, customerEmail, customerPhone, customerAddress, items, totalPrice } = body;
 
@@ -70,6 +77,9 @@ export async function POST(req: NextRequest) {
     // Admin'e e-posta gönder
     const adminEmail = process.env.ADMIN_EMAIL || "mobarbilisim@gmail.com";
     
+    // NOT: Resend ücretsiz planda sadece doğrulanmış alan adından gönderilebilir.
+    // Eğer kendi alan adınızı (mobarbilisim.com) Resend'e eklediyseniz from'u değiştirin.
+    // Aksi halde "onboarding@resend.dev" kullanmanız zorunludur.
     const { data, error } = await resend.emails.send({
       from: "Mobar Bilişim <onboarding@resend.dev>",
       to: [adminEmail],
@@ -78,13 +88,15 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("Resend Error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Resend E-posta Hatası:", JSON.stringify(error));
+      return NextResponse.json({ error: error.message, detail: "Resend API hatası. Lütfen API anahtarınızı ve alan adı ayarlarınızı kontrol edin." }, { status: 500 });
     }
 
+    console.log("✅ Sipariş bildirimi gönderildi. Email ID:", data?.id);
     return NextResponse.json({ success: true, emailId: data?.id });
   } catch (err: any) {
-    console.error("Notification Error:", err);
+    console.error("Bildirim Sistemi Kritik Hata:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

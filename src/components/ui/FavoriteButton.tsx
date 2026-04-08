@@ -5,6 +5,8 @@ import { Heart } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+import toast from 'react-hot-toast';
+
 export default function FavoriteButton({ product }: { product: any }) {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const favState = isFavorite(product.id);
@@ -17,15 +19,17 @@ export default function FavoriteButton({ product }: { product: any }) {
     // Check if user logged in
     const { data } = await supabase.auth.getSession();
     if (!data.session) {
-      alert("Favorilere eklemek için önce giriş yapmalısınız.");
+      toast.error("Favorilere eklemek için giriş yapmalısınız.", { style: { background: '#ef4444' } });
       router.push("/giris");
       return;
     }
 
     if (favState) {
       removeFavorite(product.id);
+      toast.success("Favorilerden çıkarıldı.", { icon: '💔' });
     } else {
       addFavorite(product);
+      toast.success("Favorilere eklendi!", { icon: '❤️' });
     }
   };
 

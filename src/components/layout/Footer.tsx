@@ -20,6 +20,8 @@ export default async function Footer() {
     twitter: "#",
     instagram: "#",
   };
+  const { data: categories } = await supabase.from("categories").select("*").range(0, 4);
+
   return (
     <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +29,7 @@ export default async function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="inline-block py-2">
-              <div className="bg-white p-4 rounded-2xl w-fit">
+              <div className="bg-white p-4 rounded-2xl w-fit hover:bg-gray-50 transition-colors">
                 <Image 
                   src="/MOBAR.png" 
                   alt="Mobar Bilişim Logo" 
@@ -46,12 +48,12 @@ export default async function Footer() {
           <div>
             <h4 className="text-white font-bold mb-6 text-lg">Kurumsal</h4>
             <ul className="space-y-3 text-sm">
-                <li><Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog & Haberler</Link></li>
-                <li><Link href="/hakkimizda" className="text-gray-400 hover:text-white transition-colors">Hakkımızda</Link></li>
-              <li><Link href="/iletisim" className="hover:text-blue-400 transition">İletişim</Link></li>
-              <li><Link href="/" className="hover:text-blue-400 transition">Banka Hesaplarımız</Link></li>
-              <li><Link href="/" className="hover:text-blue-400 transition">Mesafeli Satış Sözleşmesi</Link></li>
-              <li><Link href="/" className="hover:text-blue-400 transition">İade ve Çeviri Şartları</Link></li>
+              <li><Link href="/blog" className="text-gray-400 hover:text-white transition-colors">Blog & Haberler</Link></li>
+              <li><Link href="/hakkimizda" className="text-gray-400 hover:text-white transition-colors">Hakkımızda</Link></li>
+              <li><Link href="/iletisim" className="text-gray-400 hover:text-white transition-colors">İletişim</Link></li>
+              <li><Link href="/sayfalar/banka-hesaplarimiz" className="text-gray-400 hover:text-white transition-colors">Banka Hesaplarımız</Link></li>
+              <li><Link href="/sayfalar/mesafeli-satis-sozlesmesi" className="text-gray-400 hover:text-white transition-colors">Mesafeli Satış Sözleşmesi</Link></li>
+              <li><Link href="/sayfalar/iade-sartlari" className="text-gray-400 hover:text-white transition-colors">İade ve İptal Şartları</Link></li>
             </ul>
           </div>
 
@@ -59,10 +61,22 @@ export default async function Footer() {
           <div>
             <h4 className="text-white font-bold mb-6 text-lg">Kategoriler</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/category/sifir-bilgisayarlar" className="hover:text-blue-400 transition">Sıfır Bilgisayarlar</Link></li>
-              <li><Link href="/category/2-el-bilgisayarlar" className="hover:text-blue-400 transition">2. El Bilgisayarlar</Link></li>
-              <li><Link href="/category/bilesenler" className="hover:text-blue-400 transition">Bilgisayar Bileşenleri</Link></li>
-              <li><Link href="/category/cevre-birimleri" className="hover:text-blue-400 transition">Çevre Birimleri</Link></li>
+              {categories && categories.length > 0 ? (
+                categories.map(cat => {
+                   const slug = cat.slug || cat.name.toLowerCase().replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/ü/g, 'u').replace(/\s+/g, '-');
+                   return (
+                     <li key={cat.id}>
+                       <Link href={`/category/${slug}`} className="text-gray-400 hover:text-white transition-colors">{cat.name}</Link>
+                     </li>
+                   )
+                })
+              ) : (
+                <>
+                  <li><Link href="/store?condition=Sıfır" className="text-gray-400 hover:text-white transition-colors">Sıfır Ürünler</Link></li>
+                  <li><Link href="/store?condition=2.El" className="text-gray-400 hover:text-white transition-colors">İkinci El Fırsatları</Link></li>
+                  <li><Link href="/store" className="text-gray-400 hover:text-white transition-colors">Tüm Mağaza</Link></li>
+                </>
+              )}
             </ul>
           </div>
 

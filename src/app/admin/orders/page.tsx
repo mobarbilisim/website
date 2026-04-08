@@ -1,37 +1,68 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Package, Clock, Truck, CheckCircle2, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   const fetchOrders = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error && data) setOrders(data);
+    try {
+      const res = await fetch("/api/admin/orders");
+      const json = await res.json();
+      if (json.data) setOrders(json.data);
+    } catch (err) {
+      console.error("Sipariş çekme hatası:", err);
+    }
     setLoading(false);
   };
 
   useEffect(() => { fetchOrders(); }, []);
 
   const updateStatus = async (id: number, newStatus: string) => {
-    const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", id);
-    if (!error) fetchOrders();
-    else alert("Durum güncellenemedi: " + error.message);
+    const order = orders.find(o => o.id === id);
+    const oldStatus = order?.status;
+    
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus, oldStatus, items: order?.items })
+      });
+      
+      if (res.ok) {
+        if (oldStatus === "Bekliyor" && newStatus !== "Bekliyor" && order?.items) {
+          toast.success("Sipariş güncellendi ve ürün stokları düşürüldü!", { icon: '📦' });
+        } else {
+          toast.success("Sipariş durumu güncellendi!");
+        }
+        fetchOrders();
+      } else {
+        const result = await res.json();
+        toast.error("Durum güncellenemedi: " + (result.error || "Bilinmeyen hata"));
+      }
+    } catch (err: any) {
+      toast.error("Hata: " + err.message);
+    }
   };
 
   const deleteOrder = async (id: number) => {
     if (!confirm("Bu siparişi tamamen silmek istediğinize emin misiniz?")) return;
-    const { error } = await supabase.from("orders").delete().eq("id", id);
-    if (!error) fetchOrders();
-    else alert("Sipariş silinemedi: " + error.message);
+    try {
+      const res = await fetch(`/api/admin/orders?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Sipariş kalıcı olarak silindi.");
+        fetchOrders();
+      } else {
+        const result = await res.json();
+        toast.error("Sipariş silinemedi: " + (result.error || "Hata"));
+      }
+    } catch (err: any) {
+      toast.error("Silme hatası: " + err.message);
+    }
   };
 
   const statusBadge = (status: string) => {
@@ -92,9 +123,9 @@ export default function AdminOrdersPage() {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {loading ? (
-                <tr><td colSpan={5} className="py-12 text-center text-gray-400 text-sm">Yükleniyor...</td></tr>
+                <tr><td colSpan={6} className="py-12 text-center text-gray-400 text-sm">Yükleniyor...</td></tr>
               ) : orders.length === 0 ? (
-                <tr><td colSpan={5} className="py-12 text-center text-gray-400 text-sm">Henüz sipariş bulunmuyor.</td></tr>
+                <tr><td colSpan={6} className="py-12 text-center text-gray-400 text-sm">Henüz sipariş bulunmuyor.</td></tr>
               ) : (
                 orders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50 transition-colors">

@@ -16,8 +16,10 @@ import { FileText, Tags } from "lucide-react";
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/admin/products", icon: Package, label: "Ürünler" },
+  { href: "/admin/categories", icon: Tags, label: "Kategoriler" },
   { href: "/admin/orders", icon: ShoppingCart, label: "Siparişler" },
   { href: "/admin/users", icon: Users, label: "Müşteriler" },
+  { href: "/admin/blogs", icon: FileText, label: "Blog Yazıları" },
   { href: "/admin/homepage", icon: Home, label: "Anasayfa İçerik" },
   { href: "/admin/settings", icon: Settings, label: "Ayarlar" },
 ];
@@ -68,8 +70,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="h-16 flex items-center px-6 border-b border-gray-200">
-        <Image src="/MOBAR.png" alt="Mobar" width={110} height={32} className="h-7 w-auto object-contain" />
+      <div className="h-20 flex items-center px-4 border-b border-gray-200">
+        <Image src="/logo.png" alt="Mobar" width={160} height={52} className="h-14 w-auto object-contain" />
         <span className="ml-auto text-[10px] font-bold tracking-widest text-gray-400 uppercase">Panel</span>
       </div>
 

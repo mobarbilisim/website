@@ -10,6 +10,9 @@ import AdminIndicator from "@/components/ui/AdminIndicator";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import { Toaster } from 'react-hot-toast';
+import { createClient } from "@/lib/supabase/server";
+import IdleTimeout from "@/components/providers/IdleTimeout";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -37,21 +40,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const supabase = await createClient();
+  const { data: categories } = await supabase.from("categories").select("*");
+
   return (
     <html lang="tr">
       <body className={`${inter.variable} font-sans antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col`}>
         <CartProvider>
           <FavoriteProvider>
-            <PWARegister />
+            <IdleTimeout>
+              <Toaster position="bottom-right" toastOptions={{ duration: 3000, style: { background: '#333', color: '#fff', fontSize: '14px', borderRadius: '12px' } }} />
+              <PWARegister />
             <AdminIndicator />
             <ConditionalShell 
-              header={<Header />}
+              header={<Header categories={categories || []} />}
               footer={<Footer />}
               whatsappButton={<WhatsAppButton />}
             >
               {children}
             </ConditionalShell>
+            </IdleTimeout>
           </FavoriteProvider>
         </CartProvider>
 

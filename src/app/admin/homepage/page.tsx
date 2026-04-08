@@ -2,102 +2,81 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Save, Plus, Trash2, Info } from "lucide-react";
+import { Save, Plus, Trash2, ChevronDown, Image as ImageIcon, Type, Link as LinkIcon, Palette, Menu, Layout, LayoutGrid } from "lucide-react";
+import toast from "react-hot-toast";
 
-const supabase = createClient();
+const slidePalettes = [
+  { name: "Koyu Lacivert (Orijinal)", bg: "from-slate-800 via-slate-900 to-gray-900", accent: "text-blue-400" },
+  { name: "Zümrüt Yeşili", bg: "from-emerald-900 via-teal-900 to-slate-900", accent: "text-emerald-400" },
+  { name: "Derin Mavi", bg: "from-blue-900 via-indigo-900 to-slate-900", accent: "text-blue-400" },
+  { name: "Koyu Mor", bg: "from-purple-900 via-purple-950 to-slate-900", accent: "text-purple-400" },
+  { name: "Gece Yarısı Siyahı", bg: "from-gray-900 via-black to-slate-900", accent: "text-gray-400" },
+  { name: "Açık Gri (Modern)", bg: "from-gray-100 via-gray-200 to-gray-300 softly", accent: "text-gray-900" }
+];
 
 const defaultSlides = [
   {
-    title: "2.EL KURUMSAL BİLGİSAYARLAR",
-    subtitle: "Fırsat Ürünleri",
-    desc: "Kurumsal Performans, Uygun Maliyet. Tüm testleri yapılmış, 3 ay garantili ürünleri hemen inceleyin.",
-    bg: "from-slate-800 to-slate-900",
-    accent: "text-blue-600",
-    btnText: "Hemen İncele",
+    title: "ALL IN ONE BİLGİSAYARLAR",
+    subtitle: "Modern Ofislerin Vazgeçilmezi",
+    desc: "Daha düzenli çalışma alanları için tasarlanmış hepsi bir arada bilgisayarlar.",
+    bg: "from-gray-100 via-gray-200 to-gray-300",
+    accent: "text-gray-900",
+    btnText: "İncele",
     btnLink: "/store",
     image_url: "",
-    Icon1: "Server",
-    Icon2: "Monitor"
-  },
-  {
-    title: "SIFIR OYUNCU KASALARI",
-    subtitle: "Yeni Nesil",
-    desc: "Oyunlarda en yüksek performansı alın. Garantili sıfır sistemlerle kesintisiz gücü hissedin.",
-    bg: "from-indigo-900 to-purple-900",
-    accent: "text-purple-400",
-    btnText: "Sistemleri Gör",
-    btnLink: "/store",
-    image_url: "",
-    Icon1: "Server",
-    Icon2: "Cpu"
-  },
-  {
-    title: "ÖZEL YAZILIM ÇÖZÜMLERİ",
-    subtitle: "Kurumsal",
-    desc: "İşletmenize özel web yazılımları, uygulamalar ve uçtan uca dijital çözümler üretiyoruz.",
-    bg: "from-emerald-900 to-teal-900",
-    accent: "text-emerald-400",
-    btnText: "Bize Ulaşın",
-    btnLink: "/iletisim",
-    image_url: "",
-    Icon1: "Code",
-    Icon2: "Laptop"
+    Icon1: "Monitor",
+    Icon2: "Server"
   }
 ];
 
-const defaultCards = [
-    {
-      title: "YAZILIM<br/>ÇÖZÜMLERİ",
-      features: ["• Modern Web Siteleri", "• E-Ticaret / Kurumsal", "• Hızlı Teslimat & SEO"],
-      bg: "from-slate-800 to-slate-900",
-      icon: "Code",
-      btnText: "PAKETLERİ GÖR",
-      btnLink: "/category/yazilim-cozumleri",
-      image_url: ""
-    },
-    {
-      title: "SIFIR GARANTİLİ<br/>ÜRÜNLER",
-      features: ["• Sıfır Kapalı Kutu", "• Tam Garanti Süresi", "• Hızlı Kargo"],
-      bg: "from-blue-500 to-blue-600",
-      icon: "Laptop",
-      btnText: "ÜRÜNLERİ İNCELE",
-      btnLink: "/sifir-urunler",
-      image_url: ""
-    },
-    {
-      title: "2. EL GARANTİLİ<br/>BİLGİSAYARLAR",
-      features: ["• Tüm Testleri Yapıldı", "• 3 Ay Mobar Garantisi", "• Kurumsal Temiz Cihazlar"],
-      bg: "from-purple-500 to-purple-600",
-      icon: "Monitor",
-      btnText: "FIRSATLARI GÖR",
-      btnLink: "/ikinci-el-urunler",
-      image_url: ""
-    }
+// Removed defaultCategoryMenu as categories are globally synced string
+
+const defaultPromoBanners = [
+  { title: "2.EL MASAÜSTÜ BİLGİSAYARLAR", subtitle: "Kurumsal Çıkışlı - Temiz Kondisyon", bg: "from-blue-400 to-blue-500", link: "/store", image_url: "" },
+  { title: "2.EL ALL IN ONE BİLGİSAYARLAR", subtitle: "Kompakt Tasarım - Garantili", bg: "from-orange-400 to-orange-500", link: "/store", image_url: "" },
+  { title: "2.EL DİZÜSTÜ BİLGİSAYARLAR", subtitle: "Taşınabilir Performans", bg: "from-emerald-400 to-emerald-500", link: "/store", image_url: "" },
+  { title: "2.EL MİNİ OFİS BİLGİSAYARLARI", subtitle: "Sessiz - Az Yer Kaplar", bg: "from-purple-400 to-purple-500", link: "/store", image_url: "" }
+];
+
+const defaultProductSliders = [
+  { title: "OYUN BİLGİSAYARLARI", subtitle: "En çok tercih edilen oyun bilgisayarları!", category_id: "", limit: 10 }
 ];
 
 export default function HomepageAdminPage() {
+  const supabase = createClient();
   const [slides, setSlides] = useState<any[]>(defaultSlides);
-  const [cards, setCards] = useState<any[]>(defaultCards);
+  const [promoBanners, setPromoBanners] = useState<any[]>(defaultPromoBanners);
+  const [productSliders, setProductSliders] = useState<any[]>(defaultProductSliders);
+  
+  const [systemCategories, setSystemCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
 
-  useEffect(() => {
-    fetchSettings();
+  useEffect(() => { 
+    fetchSettings(); 
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/admin/categories");
+      const json = await res.json();
+      if (json.data) setSystemCategories(json.data);
+    } catch (err) { }
+  };
 
   const fetchSettings = async () => {
     try {
-      const { data, error } = await supabase.from('site_settings').select('*');
-      if (error) {
-        console.error("Tablo yok veya hata", error);
-        setStatusMessage("Lütfen veritabanında 'site_settings' tablosunu oluşturun. Slaytlar varsayılan olarak yüklenmiştir.");
-      }
-      if (data && data.length > 0) {
-        const sObj = data.find(d => d.key === 'homepage_slides');
-        const cObj = data.find(d => d.key === 'homepage_cards');
+      const res = await fetch("/api/admin/settings");
+      const json = await res.json();
+      if (json.data && json.data.length > 0) {
+        const sObj = json.data.find((d: any) => d.key === 'homepage_slides');
+        const pbObj = json.data.find((d: any) => d.key === 'homepage_promo_banners');
+        const psObj = json.data.find((d: any) => d.key === 'homepage_product_sections');
+        
         if (sObj?.value?.length > 0) setSlides(sObj.value);
-        if (cObj?.value?.length > 0) setCards(cObj.value.slice(0, 3)); // 4->3 truncate if old value is present
+        if (pbObj?.value?.length > 0) setPromoBanners(pbObj.value);
+        if (psObj?.value?.length > 0) setProductSliders(psObj.value);
       }
     } catch (err) {
       console.error(err);
@@ -108,276 +87,222 @@ export default function HomepageAdminPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    setStatusMessage("Kaydediliyor...");
+    const toastId = toast.loading("Anasayfa güncelleniyor...");
     try {
-      // Upsert requires the unique key to exist
-      const { error } = await supabase.from('site_settings').upsert([
-        { key: 'homepage_slides', value: slides },
-        { key: 'homepage_cards', value: cards }
-      ], { onConflict: 'key' });
-
-      if (error) throw error;
-      setStatusMessage("Başarıyla kaydedildi!");
+      const res = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([
+          { key: 'homepage_slides', value: slides },
+          { key: 'homepage_promo_banners', value: promoBanners },
+          { key: 'homepage_product_sections', value: productSliders }
+        ])
+      });
+      if (res.ok) {
+        toast.success("Anasayfa vitrini yayına alındı!", { id: toastId, icon: '🚀' });
+      } else {
+        const r = await res.json();
+        toast.error("Hata: " + (r.error || "Bilinmeyen hata"), { id: toastId });
+      }
     } catch (err: any) {
-      setStatusMessage("Hata: " + err.message);
+      toast.error("Hata: " + err.message, { id: toastId });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const addSlide = () => {
-    setSlides([...slides, {
-      title: "YENİ SLAYT BAŞLIĞI",
-      subtitle: "Alt Başlık",
-      desc: "Açıklama...",
-      bg: "from-slate-800 to-slate-900",
-      accent: "text-blue-600",
-      btnText: "İncele",
-      btnLink: "/store",
-      image_url: "",
-      Icon1: "Server",
-      Icon2: "Monitor"
-    }]);
-  };
-
-  const removeSlide = (index: number) => {
-    setSlides(slides.filter((_, i) => i !== index));
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, listSetter: any, list: any[], index: number) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
+    const toastId = toast.loading("Görsel yükleniyor...");
     try {
-      setStatusMessage("Fotoğraf yükleniyor...");
-      
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `slider/${fileName}`;
-
-      const { error: uploadError, data } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        // Eğer "images" bucket yoksa kullanıcıyı uyarmak için hata fırlatalım
-        if (uploadError.message.includes("Bucket not found")) {
-          throw new Error("Supabase panelinden 'images' isimli herkese açık (Public) bir Storage Bucket oluşturmalısınız.");
-        }
-        throw uploadError;
-      }
-
-      // Public URL alalım
+      const fileName = `home_${Date.now()}.${fileExt}`;
+      const filePath = `anasayfa/${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('images').upload(filePath, file);
+      if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(filePath);
+      
+      const newList = [...list];
+      newList[index].image_url = publicUrl;
+      listSetter(newList);
 
-      const newSlides = [...slides];
-      newSlides[index].image_url = publicUrl;
-      setSlides(newSlides);
-      setStatusMessage("Fotoğraf yüklendi!");
-
+      toast.success("Görsel yüklendi!", { id: toastId, icon: '📸' });
     } catch (err: any) {
-      console.error(err);
-      setStatusMessage("Hata: " + err.message);
-      alert("Fotoğraf yükleme hatası: " + err.message);
+      toast.error("Yükleme hatası: " + err.message, { id: toastId });
     }
   };
 
-  if (isLoading) return <div>Yükleniyor...</div>;
+  if (isLoading) return <div className="p-10 flex items-center justify-center text-gray-500 font-medium animate-pulse">Anasayfa Verileri Yükleniyor...</div>;
 
   return (
-    <div className="space-y-8 pb-12 w-full max-w-5xl">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight mb-2">Anasayfa İçerik Yönetimi</h2>
-        <p className="text-gray-500">
-          Slaytları ve aşağıdaki 4 özellik kartını buradan düzenleyebilirsiniz. Değişiklikleri kaydetmek için en alttaki butonu kullanın.
-        </p>
-        {statusMessage && (
-          <div className="mt-4 p-4 bg-blue-500/10 text-blue-600 rounded-xl flex items-center gap-2 border border-blue-500/20">
-            <Info size={20} />
-            <span className="font-medium">{statusMessage}</span>
-          </div>
-        )}
+    <div className="space-y-10 pb-24 w-full max-w-5xl mx-auto">
+      <div className="border-b border-gray-200 pb-6 mb-8">
+        <h2 className="text-3xl font-black tracking-tight text-gray-900 mb-2">Anasayfa Vitrin Yönetimi</h2>
+        <p className="text-gray-500 text-sm">Arama çubuğu altı menüleri, slider, promosyon bannerları ve dinamik ürün listelerini buradan yönetin.</p>
       </div>
 
-      {/* Slaytlar */}
-      <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">1. Kayan Slaytlar (Hero)</h3>
-          <button onClick={addSlide} className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border border-blue-500/30 text-blue-600 px-4 py-2 rounded-lg font-semibold text-sm transition-colors">
-            <Plus size={16} /> Yeni Ekle
+      {/* 1. ÜST KATEGORİ MENÜSÜ -> KALDIRILDI (Artık Global Kategoriler kullanılıyor) */}
+
+      {/* 2. HERO SLIDER */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+           <div>
+             <h3 className="text-lg font-black text-gray-900 flex items-center gap-2"><Layout size={20}/> 2. Geniş Kayan Slaytlar (Hero Slider)</h3>
+           </div>
+           <button onClick={() => setSlides([...slides, { title: "YENİ", subtitle: "", desc: "", bg: "from-gray-100", btnText: "İncele", btnLink: "/", image_url: "" }])} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm">
+             <Plus size={16} /> Ekle
+           </button>
+        </div>
+        <div className="p-6 space-y-4">
+          {slides.map((slide, index) => (
+             <details key={index} className="group bg-white border border-gray-200 rounded-xl overflow-hidden p-4">
+               <summary className="font-bold cursor-pointer">{slide.title || "İsimsiz Slayt"} (Genişlet)</summary>
+               <div className="mt-4 space-y-4 pt-4 border-t border-gray-100">
+                  <button onClick={() => setSlides(slides.filter((_, i) => i !== index))} className="text-red-500 text-xs flex items-center gap-1 mb-2"><Trash2 size={12}/> Sil</button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-gray-500">Ana Başlık</label>
+                      <input className="w-full border p-2 rounded text-sm" value={slide.title} onChange={(e) => { const n=[...slides]; n[index].title=e.target.value; setSlides(n); }}/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500">Üst Başlık (Subtitle)</label>
+                      <input className="w-full border p-2 rounded text-sm" value={slide.subtitle} onChange={(e) => { const n=[...slides]; n[index].subtitle=e.target.value; setSlides(n); }}/>
+                    </div>
+                    <div className="col-span-2">
+                       <label className="text-xs font-bold text-gray-500">Açıklama (Gri metin)</label>
+                       <input className="w-full border p-2 rounded text-sm" value={slide.desc} onChange={(e) => { const n=[...slides]; n[index].desc=e.target.value; setSlides(n); }}/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500">Buton Linki</label>
+                      <input className="w-full border p-2 rounded text-sm" value={slide.btnLink} onChange={(e) => { const n=[...slides]; n[index].btnLink=e.target.value; setSlides(n); }}/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-gray-500">Arkaplan Rengi / Teması</label>
+                      <input className="w-full border p-2 rounded text-sm" value={slide.bg} onChange={(e) => { const n=[...slides]; n[index].bg=e.target.value; setSlides(n); }} placeholder="Örn: from-gray-100 to-gray-200"/>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded mt-4 flex items-center gap-4">
+                     <div className="relative w-32 h-20 bg-white border border-gray-300 rounded flex items-center justify-center">
+                        {slide.image_url ? <img src={slide.image_url} className="h-full object-contain p-1"/> : <span className="text-xs text-gray-400">Ürün PNG / Slider PNG</span>}
+                        <input type="file" onChange={(e) => handleImageUpload(e, setSlides, slides, index)} className="absolute inset-0 opacity-0 cursor-pointer"/>
+                     </div>
+                     <span className="text-xs text-gray-500">Bu kısıma sağ tarafta duracak ürünü şeffaf PNG olarak yükleyin.</span>
+                  </div>
+               </div>
+             </details>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. PROMOSYON BANNERLARI (4'LÜ) */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+         <div className="px-6 py-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-black text-gray-900 flex items-center gap-2"><LayoutGrid size={20}/> 3. Dörtlü Fırsat Bannerları</h3>
+            <p className="text-xs text-gray-500 mt-1">Slider altındaki 4 adet renkli küçük banner.</p>
+          </div>
+          <button onClick={() => setPromoBanners([...promoBanners, { title: "YENİ", subtitle: "", link: "/", bg: "from-blue-400 to-blue-500", image_url: "" }])} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md shadow-blue-500/20">
+            <Plus size={16} /> Banner Ekle
           </button>
         </div>
-        
-        <div className="space-y-6">
-          {slides.map((slide, index) => (
-            <div key={index} className="border border-gray-200 bg-white/5 rounded-2xl p-6 relative">
-              <button 
-                onClick={() => removeSlide(index)}
-                className="absolute top-4 right-4 bg-red-50 text-red-600 p-2 rounded-lg hover:bg-red-100 transition-colors"
-                title="Slaytı Sil"
-              >
-                <Trash2 size={18} />
-              </button>
-              <h4 className="font-bold text-gray-900 mb-4">Slayt #{index + 1}</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Küçük Üst Bilgi (Subtitle)</label>
-                  <input type="text" value={slide.subtitle} onChange={(e) => {
-                    const newSlides = [...slides]; newSlides[index].subtitle = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {promoBanners.map((banner, index) => (
+             <div key={index} className="border border-gray-200 p-4 rounded-xl relative group">
+                <button onClick={() => { if(confirm("Silmek emin misiniz?")) setPromoBanners(promoBanners.filter((_, i) => i !== index)); }} className="absolute -top-2 -right-2 bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10"><Trash2 size={12} /></button>
+                <div className="grid grid-cols-3 gap-4">
+                   <div className="col-span-2 space-y-2">
+                     <input className="w-full border p-1.5 rounded text-sm font-bold placeholder-gray-400" placeholder="BAŞLIK" value={banner.title} onChange={(e)=>{const n=[...promoBanners]; n[index].title=e.target.value; setPromoBanners(n);}}/>
+                     <input className="w-full border p-1.5 rounded text-xs text-gray-500" placeholder="Açıklama" value={banner.subtitle} onChange={(e)=>{const n=[...promoBanners]; n[index].subtitle=e.target.value; setPromoBanners(n);}}/>
+                     <select className="w-full border p-1.5 rounded text-xs bg-white font-mono" value={banner.link} onChange={(e)=>{const n=[...promoBanners]; n[index].link=e.target.value; setPromoBanners(n);}}>
+                         <option value="">-- Link Seçin --</option>
+                         <optgroup label="Sayfalar">
+                           <option value="/store">Tüm Ürünler</option>
+                           <option value="/sifir-urunler">Sıfır Ürünler</option>
+                           <option value="/ikinci-el-urunler">2.El Ürünler</option>
+                           <option value="/blogs">Blog</option>
+                         </optgroup>
+                         <optgroup label="Kategoriler">
+                           {systemCategories.map((c: any) => (
+                             <option key={c.id} value={`/category/${c.slug}`}>{c.parent_id ? '  - ' : ''}{c.name}</option>
+                           ))}
+                         </optgroup>
+                       </select>
+                     <input className="w-full border border-dashed border-blue-300 bg-blue-50 p-1.5 rounded text-xs font-mono" placeholder="Renk Örn: from-blue-400 to-blue-600" value={banner.bg} onChange={(e)=>{const n=[...promoBanners]; n[index].bg=e.target.value; setPromoBanners(n);}}/>
+                   </div>
+                   <div className="col-span-1 relative bg-gray-50 border border-gray-300 rounded flex items-center justify-center overflow-hidden">
+                      {banner.image_url ? <img src={banner.image_url} className="h-full object-contain p-1 w-full"/> : <span className="text-[10px] text-gray-400 text-center">Görsel<br/>Tıkla Yükle</span>}
+                      <input type="file" onChange={(e) => handleImageUpload(e, setPromoBanners, promoBanners, index)} className="absolute inset-0 opacity-0 cursor-pointer"/>
+                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Ana Başlık</label>
-                  <input type="text" value={slide.title} onChange={(e) => {
-                    const newSlides = [...slides]; newSlides[index].title = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Açıklama</label>
-                  <textarea value={slide.desc} rows={2} onChange={(e) => {
-                    const newSlides = [...slides]; newSlides[index].desc = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900"></textarea>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Buton Metni</label>
-                  <input type="text" value={slide.btnText} onChange={(e) => {
-                    const newSlides = [...slides]; newSlides[index].btnText = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Buton Linki (örn: /store)</label>
-                  <input type="text" value={slide.btnLink || ''} onChange={(e) => {
-                    const newSlides = [...slides]; newSlides[index].btnLink = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
-                </div>
-                <div className="md:col-span-2 p-4 bg-white border border-gray-200 rounded-xl">
-                  <label className="block text-sm font-bold text-gray-900 mb-2">Görsel Seçenekleri (İkon yerine Fotoğraf)</label>
-                  <p className="text-xs text-gray-500 mb-2">Eğer bir fotoğraf URL'si girerseniz, ikonlar iptal edilir ve bu fotoğraf gösterilir. Ya direkt bilgisayardan yükleyin ya da internetten link kopyalayın.</p>
-                  
-                  <div className="flex flex-col md:flex-row gap-4 mb-3">
-                    <input type="text" placeholder="Fotoğraf Linki (https://...)" value={slide.image_url || ''} onChange={(e) => {
-                      const newSlides = [...slides]; newSlides[index].image_url = e.target.value; setSlides(newSlides);
-                    }} className="flex-1 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
-                    
-                    <div className="flex-shrink-0 relative overflow-hidden bg-blue-50 text-blue-600 border border-blue-500/30 hover:bg-blue-100 transition-colors font-medium px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center">
-                      <span className="cursor-pointer">Direkt Yükle</span>
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={(e) => handleImageUpload(e, index)}
-                        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer" 
-                      />
-                    </div>
-                  </div>
-
-                  {slide.image_url && (
-                    <div className="mb-4">
-                      <img src={slide.image_url} alt="Önizleme" className="h-24 object-contain rounded border border-gray-200" />
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Arka İkon</label>
-                      <input type="text" value={slide.Icon1 || ''} onChange={(e) => {
-                        const newSlides = [...slides]; newSlides[index].Icon1 = e.target.value; setSlides(newSlides);
-                      }} className="w-full px-3 py-1.5 rounded-md bg-gray-50 border border-gray-200 outline-none text-sm text-gray-900" />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Ön İkon</label>
-                      <input type="text" value={slide.Icon2 || ''} onChange={(e) => {
-                        const newSlides = [...slides]; newSlides[index].Icon2 = e.target.value; setSlides(newSlides);
-                      }} className="w-full px-3 py-1.5 rounded-md bg-gray-50 border border-gray-200 outline-none text-sm text-gray-900" />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Arkaplan Rengi (from-... to-...)</label>
-                  <input type="text" value={slide.bg} onChange={(e) => {
-                    const newSlides = [...slides]; newSlides[index].bg = e.target.value; setSlides(newSlides);
-                  }} className="w-full px-4 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-gray-900" />
-                </div>
-              </div>
-            </div>
-          ))}
-          {slides.length === 0 && (
-            <div className="text-center py-10 text-gray-500 bg-white border border-gray-200 shadow-sm rounded-xl">Hiç slayt bulunmuyor. Eklemek için "Yeni Ekle"ye tıklayın.</div>
-          )}
-        </div>
-      </div>
-
-      {/* Kartlar */}
-      <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-        <h3 className="text-xl font-bold text-gray-900 mb-6">2. Özellik Kartları (3 Adet Merkez Kartlar)</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {cards.map((card, index) => (
-            <div key={index} className="border border-gray-200 bg-white/5 rounded-2xl p-4">
-              <h4 className="font-bold text-gray-900 mb-4 inline-block bg-white px-3 py-1 rounded-full text-xs shadow-sm border border-gray-200">Kart #{index + 1}</h4>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Başlık (HTML br kullanılabilir)</label>
-                  <input type="text" value={card.title} onChange={(e) => {
-                    const newCards = [...cards]; newCards[index].title = e.target.value; setCards(newCards);
-                  }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Özellikler (Virgülle ayırın)</label>
-                  <input type="text" value={card.features?.join(', ') || ''} onChange={(e) => {
-                    const newCards = [...cards]; newCards[index].features = e.target.value.split(',').map(s => s.trim()); setCards(newCards);
-                  }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">İkon Adı</label>
-                    <input type="text" value={card.icon} onChange={(e) => {
-                      const newCards = [...cards]; newCards[index].icon = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Arkaplan Sınıfı</label>
-                    <input type="text" value={card.bg} onChange={(e) => {
-                      const newCards = [...cards]; newCards[index].bg = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Buton Metni</label>
-                    <input type="text" value={card.btnText} onChange={(e) => {
-                      const newCards = [...cards]; newCards[index].btnText = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Buton Linki</label>
-                    <input type="text" value={card.btnLink} onChange={(e) => {
-                      const newCards = [...cards]; newCards[index].btnLink = e.target.value; setCards(newCards);
-                    }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Görsel URL <span className="text-xs text-gray-500">(Zorunlu değil, girilirse İkon yerine gösterilir)</span></label>
-                  <input type="text" placeholder="https://..." value={card.image_url || ''} onChange={(e) => {
-                    const newCards = [...cards]; newCards[index].image_url = e.target.value; setCards(newCards);
-                  }} className="w-full px-3 py-2 rounded-lg bg-white border border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-900" />
-                </div>
-              </div>
-            </div>
+             </div>
           ))}
         </div>
       </div>
 
-      <div className="sticky bottom-6 z-10">
-        <button 
-          onClick={handleSave}
-          disabled={isSaving}
-          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold shadow-2xl shadow-blue-600/30 transition-all text-lg disabled:opacity-70 disabled:pointer-events-none"
-        >
-          <Save size={24} /> {isSaving ? "Değişiklikler Kaydediliyor, Lütfen Bekleyin..." : "Tüm Değişiklikleri Kaydet ve Yayınla"}
+      {/* 4. DİNAMİK ÜRÜN KATEGORİ SLIDERLARI */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+         <div className="px-6 py-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-black text-gray-900 flex items-center gap-2"><LayoutGrid size={20}/> 4. Dinamik Kaydırılabilir Ürün Listeleri</h3>
+            <p className="text-xs text-gray-500 mt-1">Anasayfada kategori tabanlı ürün çekmeceleri oluşturun.</p>
+          </div>
+          <button onClick={() => setProductSliders([...productSliders, { title: "YENİ VİTRİN", subtitle: "Alt açıklama", category_id: "", limit: 10 }])} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md shadow-blue-500/20">
+            <Plus size={16} /> Slayt Grubu Ekle
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          {productSliders.map((slider, index) => (
+             <div key={index} className="border border-gray-200 p-5 rounded-xl block relative group">
+               <button onClick={() => { if(confirm("Bölümü silmek istediğinizden emin misiniz?")) setProductSliders(productSliders.filter((_, i) => i !== index)); }} className="absolute 1 top-2 right-2 bg-red-100 text-red-600 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10 hover:bg-red-500 hover:text-white"><Trash2 size={14} /></button>
+               
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mr-10">
+                 <div>
+                    <label className="block text-xs font-bold text-gray-500">Alan Başlığı</label>
+                    <input className="w-full border p-2 rounded text-sm font-bold text-gray-900" placeholder="Örn: OYUN BİLGİSAYARLARI" value={slider.title} onChange={(e)=>{const n=[...productSliders]; n[index].title=e.target.value; setProductSliders(n);}}/>
+                 </div>
+                 <div>
+                    <label className="block text-xs font-bold text-gray-500">Hangi Kategoriden Gösterilsin?</label>
+                    <select className="w-full border p-2 rounded text-sm bg-white" value={slider.category_id} onChange={(e)=>{const n=[...productSliders]; n[index].category_id=e.target.value; setProductSliders(n);}}>
+                       <option value="">-- Kategori Seçin --</option>
+                       {systemCategories
+                         .filter((c: any) => !c.parent_id)
+                         .map((parent: any) => {
+                           const kids = systemCategories.filter((ch: any) => ch.parent_id === parent.id);
+                           return kids.length > 0 ? (
+                             <optgroup key={parent.id} label={parent.name}>
+                               <option value={parent.id}> Tümü: {parent.name}</option>
+                               {kids.map((ch: any) => (
+                                 <option key={ch.id} value={ch.id}>  - {ch.name}</option>
+                               ))}
+                             </optgroup>
+                           ) : (
+                             <option key={parent.id} value={parent.id}>{parent.name}</option>
+                           );
+                         })}
+                    </select>
+                 </div>
+                 <div>
+                    <label className="block text-xs font-bold text-gray-500">Alt Başlık (Açıklama)</label>
+                    <input className="w-full border p-2 rounded text-sm" placeholder="Örn: En çok tercih edilenler!" value={slider.subtitle} onChange={(e)=>{const n=[...productSliders]; n[index].subtitle=e.target.value; setProductSliders(n);}}/>
+                 </div>
+                 <div>
+                    <label className="block text-xs font-bold text-gray-500">Maksimum Gösterilecek Ürün Adedi</label>
+                    <input type="number" min="4" max="24" className="w-full border p-2 rounded text-sm bg-white" value={slider.limit} onChange={(e)=>{const n=[...productSliders]; n[index].limit=parseInt(e.target.value); setProductSliders(n);}}/>
+                 </div>
+               </div>
+             </div>
+          ))}
+          {productSliders.length === 0 && <div className="text-gray-400 font-medium text-sm text-center py-6">Ürün slider'ı eklenmemiş.</div>}
+        </div>
+      </div>
+
+      {/* SABİT KAYDET BUTONU */}
+      <div className="fixed bottom-0 left-0 lg:left-64 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-gray-200 z-50 flex justify-center">
+        <button onClick={handleSave} disabled={isSaving} className="w-full max-w-2xl flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white px-8 py-3.5 rounded-2xl font-black shadow-2xl shadow-green-600/20 transition-all text-base disabled:opacity-70">
+          <Save size={20} /> {isSaving ? "KAYDEDİLİYOR..." : "YENİ TASARIMI YAYINLA"}
         </button>
       </div>
-
     </div>
   );
 }
-

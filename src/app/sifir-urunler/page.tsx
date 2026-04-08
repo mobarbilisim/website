@@ -37,20 +37,35 @@ export default async function SifirUrunlerPage({
           {/* Sidebar */}
           <div className="w-full md:w-1/4">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-              <h2 className="text-xl font-extrabold text-gray-900 mb-6 uppercase">YENİ ÜRÜNLER</h2>
+              <h2 className="text-xl font-extrabold text-gray-900 mb-6 uppercase">KATEGORİLER</h2>
               <ul className="space-y-2">
                 <li>
                   <Link href="/sifir-urunler" className={`flex items-center justify-between text-sm py-2 px-3 rounded-lg transition-colors ${!cId ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-600 hover:bg-gray-50'}`}>
                     Tümü <ChevronRight size={16} />
                   </Link>
                 </li>
-                {categories?.map((cat) => (
-                  <li key={cat.id}>
-                    <Link href={`/sifir-urunler?c=${cat.id}`} className={`flex items-center justify-between text-sm py-2 px-3 rounded-lg transition-colors ${cId === String(cat.id) ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-600 hover:bg-gray-50'}`}>
-                      {cat.name} <ChevronRight size={16} />
-                    </Link>
-                  </li>
-                ))}
+                {categories?.filter((c) => !c.parent_id).map((cat) => {
+                  const subCats = categories.filter((sub) => sub.parent_id === cat.id);
+                  const isCatActive = cId === String(cat.id);
+                  return (
+                    <li key={cat.id}>
+                      <Link href={`/sifir-urunler?c=${cat.id}`} className={`flex items-center justify-between text-sm py-2 px-3 rounded-lg transition-colors ${isCatActive ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-600 hover:bg-gray-50 font-semibold'}`}>
+                        {cat.name} <ChevronRight size={16} />
+                      </Link>
+                      {subCats.length > 0 && (
+                        <ul className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-2">
+                          {subCats.map((sub) => (
+                            <li key={sub.id}>
+                              <Link href={`/sifir-urunler?c=${sub.id}`} className={`flex items-center justify-between text-xs py-1.5 px-3 rounded-md transition-colors ${cId === String(sub.id) ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-blue-600 hover:bg-gray-50'}`}>
+                                {sub.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </div>

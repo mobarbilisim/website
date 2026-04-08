@@ -108,16 +108,34 @@ export default async function StorePage({
                     Tüm Ürünler
                   </Link>
                 </li>
-                {categories?.map((cat) => (
-                  <li key={cat.id}>
-                    <Link 
-                      href={`/store?category=${cat.id}`} 
-                      className={`text-sm font-bold transition-all ${selectedCategory === cat.id.toString() ? 'text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
+                {categories?.filter((c) => !c.parent_id).map((cat) => {
+                  const subCats = categories.filter((sub) => sub.parent_id === cat.id);
+                  const isCatActive = selectedCategory === cat.id.toString();
+                  return (
+                    <li key={cat.id} className="pt-2">
+                      <Link 
+                        href={`/store?category=${cat.id}`} 
+                        className={`text-sm font-bold transition-all ${isCatActive ? 'text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}
+                      >
+                        {cat.name}
+                      </Link>
+                      {subCats.length > 0 && (
+                        <ul className="ml-3 mt-2 space-y-2 border-l-2 border-gray-100 pl-3">
+                          {subCats.map((sub) => (
+                            <li key={sub.id}>
+                              <Link 
+                                href={`/store?category=${sub.id}`} 
+                                className={`text-xs font-semibold transition-all ${selectedCategory === sub.id.toString() ? 'text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}
+                              >
+                                {sub.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
 

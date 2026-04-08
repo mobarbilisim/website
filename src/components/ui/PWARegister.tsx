@@ -5,16 +5,18 @@ import { useEffect } from "react";
 export default function PWARegister() {
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("/sw.js").then(
-          function (registration) {
-            console.log("PWA Service Worker registered with scope: ", registration.scope);
-          },
-          function (err) {
-            console.log("PWA Service Worker registration failed: ", err);
+      if (process.env.NODE_ENV === 'production') {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("/sw.js").catch((err) => console.log("PWA SW err: ", err));
+        });
+      } else {
+        // Dev modunda eski yüklenen servis worker varsa zorla kaldır to prevent aggressive caching
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (let registration of registrations) {
+            registration.unregister();
           }
-        );
-      });
+        });
+      }
     }
   }, []);
 

@@ -11,7 +11,8 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState({
     totalGelir: 0,
     toplamSiparis: 0,
-    toplamUrun: 0,
+    aktifUrun: 0,
+    tukenmisSayisi: 0,
     bekleyenSiparis: 0,
   });
   
@@ -22,9 +23,18 @@ export default function AdminDashboard() {
     async function loadStats() {
       try {
         setLoading(true);
-        const { count: productsCount } = await supabase
+        
+        // Stokta olanlar (aktif)
+        const { count: activeCount } = await supabase
           .from("products")
-          .select("*", { count: "exact", head: true });
+          .select("*", { count: "exact", head: true })
+          .gt("stock", 0);
+
+        // Tükenmiş olanlar
+        const { count: outOfStockCount } = await supabase
+          .from("products")
+          .select("*", { count: "exact", head: true })
+          .lte("stock", 0);
 
         const { data: orders } = await supabase
           .from("orders")
@@ -32,11 +42,12 @@ export default function AdminDashboard() {
           .order("created_at", { ascending: false })
           .limit(50);
           
-        const gelir = orders?.reduce((sum, order) => sum + (Number(order.total_price) || 0), 0) || 0;
-        const bekleyen = orders?.filter(o => o.status === "Bekliyor").length || 0;
+        const gelir = orders?.reduce((sum: number, order: any) => sum + (Number(order.total_price) || 0), 0) || 0;
+        const bekleyen = orders?.filter((o: any) => o.status === "Bekliyor").length || 0;
 
         setMetrics({
-          toplamUrun: productsCount || 0,
+          aktifUrun: activeCount || 0,
+          tukenmisSayisi: outOfStockCount || 0,
           toplamSiparis: orders?.length || 0,
           totalGelir: gelir,
           bekleyenSiparis: bekleyen,
@@ -56,7 +67,8 @@ export default function AdminDashboard() {
   const stats = [
     { title: "Toplam Ciro", value: loading ? "..." : `₺${metrics.totalGelir.toLocaleString('tr-TR')}`, sub: "Tüm zamanlar", icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
     { title: "Toplam Sipariş", value: loading ? "..." : metrics.toplamSiparis.toString(), sub: "Tüm kayıtlar", icon: CreditCard, color: "text-blue-600", bg: "bg-blue-50" },
-    { title: "Aktif Ürünler", value: loading ? "..." : metrics.toplamUrun.toString(), sub: "Mağazada listelenen", icon: Laptop, color: "text-purple-600", bg: "bg-purple-50" },
+    { title: "Aktif Ürünler", value: loading ? "..." : metrics.aktifUrun.toString(), sub: "Stokta olan ürünler", icon: Laptop, color: "text-purple-600", bg: "bg-purple-50" },
+    { title: "Tükenen Ürünler", value: loading ? "..." : metrics.tukenmisSayisi.toString(), sub: "Stokta yok", icon: TrendingUp, color: "text-red-600", bg: "bg-red-50" },
     { title: "Bekleyen Sipariş", value: loading ? "..." : metrics.bekleyenSiparis.toString(), sub: "İlgilenilmesi gereken", icon: Activity, color: "text-orange-600", bg: "bg-orange-50" },
   ];
 

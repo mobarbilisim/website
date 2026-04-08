@@ -9,8 +9,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  experimental: {
+    // @ts-expect-error: turbopack config might not be perfectly typed in this version
+    turbopack: {
+      root: process.cwd(),
+    },
   },
   typescript: {
     ignoreBuildErrors: true,
