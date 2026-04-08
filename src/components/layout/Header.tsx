@@ -74,12 +74,12 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
             
             <div className="w-full md:w-auto flex items-center justify-between">
               <Link href="/" className="flex-shrink-0">
-                <Image 
-                  src="/logo.png" 
-                  alt="Mobar Bilişim Logo" 
-                  width={220} 
-                  height={70} 
-                  className="h-16 md:h-20 w-auto object-contain" 
+                <Image
+                  src="/logo.png"
+                  alt="Mobar Bilişim Logo"
+                  width={340}
+                  height={90}
+                  className="h-20 md:h-24 w-auto object-contain"
                   priority
                 />
               </Link>

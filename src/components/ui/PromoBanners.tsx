@@ -9,7 +9,7 @@ export default function PromoBanners({ banners = [] }: { banners: any[] }) {
       <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(banners.length, 4)} gap-4 lg:gap-6`}>
         {banners.map((banner, idx) => (
           <Link href={banner.link || '#'} key={idx} className={`block rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 relative group bg-gradient-to-br ${banner.bg} text-white`}>
-             <div className="flex justify-between items-center h-32 md:h-36 pr-4 relative z-10 p-5 lg:p-6">
+             <div className="flex justify-between items-center h-44 md:h-48 pr-4 relative z-10 p-5 lg:p-6">
                 <div className="flex flex-col justify-center max-w-[65%]">
                    <h3 className="text-sm md:text-base font-black leading-tight mb-1 drop-shadow-sm line-clamp-2">
                       {banner.title}

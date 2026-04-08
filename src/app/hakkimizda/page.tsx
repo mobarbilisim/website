@@ -12,7 +12,7 @@ export default function HakkimizdaPage() {
       {/* Hero Section */}
       <div className="bg-gray-900 text-white py-24 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80')] opacity-20 bg-cover bg-center mix-blend-overlay"></div>
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
+        <div className="relative z-10 max-w-[1400px] mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">Geleceğin Teknolojisini Bugünden Kuruyoruz</h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
             Sıfır ve 2. el kurumsal teknoloji çözümlerinden uçtan uca özel yazılımlara kadar, dijital dünyadaki en güçlü iş ortağınız olmak için yola çıktık.
@@ -20,7 +20,7 @@ export default function HakkimizdaPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
@@ -61,7 +61,7 @@ export default function HakkimizdaPage() {
       </div>
 
       <div className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             
             <div className="p-10 rounded-3xl bg-gray-50 border border-gray-100 relative overflow-hidden group hover:shadow-xl transition-all">
