@@ -73,7 +73,7 @@ export default function ProductSlider({ title, subtitle, products = [] }: { titl
       >
         {products.map((product) => {
           const primaryImg = product.images?.[0] || product.image_url;
-          const fakeOldPrice = product.price * 1.15;
+          const originalPrice = product.original_price || null;
           const isFav = isFavorite(product.id);
           const conditionText = product.condition || (product.features?.[0] || '');
           return (
@@ -134,7 +134,7 @@ export default function ProductSlider({ title, subtitle, products = [] }: { titl
                  {/* Price & Action */}
                  <div className="mt-auto flex items-end justify-between">
                     <div>
-                       <div className="text-xs text-gray-400 line-through font-medium mb-0.5">₺{fakeOldPrice.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}</div>
+                       {originalPrice && <div className="text-xs text-gray-400 line-through font-medium mb-0.5">₺{originalPrice.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}</div>}
                        <div className="text-[#e20613] font-black tracking-tight text-lg leading-none">
                           {product.price.toLocaleString('tr-TR')} <span className="text-sm font-bold ml-0.5">TL</span>
                        </div>

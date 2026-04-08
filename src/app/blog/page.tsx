@@ -5,6 +5,11 @@ import { Calendar, ArrowRight, FileText } from "lucide-react";
 
 export const revalidate = 60; // 60 saniyede bir önbelleği yenile
 
+export const metadata = {
+  title: "Blog & Haberler | Mobar Bilişim",
+  description: "Teknoloji dünyasından güncel haberler, ipuçları ve rehberler. Mobar Bilişim blog yazılarıyla bilginizi güncel tutun.",
+};
+
 export default async function BlogPage() {
   const supabase = await createClient();
 
