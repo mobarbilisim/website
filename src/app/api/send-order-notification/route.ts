@@ -94,6 +94,67 @@ export async function POST(req: NextRequest) {
       emailHtml
     );
 
+    // Müşteriye sipariş onay maili gönder (e-posta varsa)
+    if (customerEmail) {
+      const customerHtml = `
+      <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+        <div style="background:linear-gradient(135deg,#2563eb,#1d4ed8);padding:32px;text-align:center">
+          <h1 style="color:#fff;margin:0;font-size:26px;font-weight:800">✅ Siparişiniz Alındı!</h1>
+          <p style="color:rgba(255,255,255,0.85);margin:10px 0 0;font-size:15px">Sipariş Numarası: <strong>#${orderId}</strong></p>
+        </div>
+        <div style="padding:28px 32px">
+          <p style="font-size:15px;color:#374151;margin-bottom:6px">Merhaba <strong>${safeName}</strong>,</p>
+          <p style="font-size:14px;color:#6b7280;margin-bottom:24px;line-height:1.6">
+            Siparişiniz başarıyla alındı. Satış ekibimiz sipariş detaylarınızı inceleyerek en kısa sürede sizinle iletişime geçecektir.
+          </p>
+
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:20px">
+            <h3 style="margin:0 0 12px;font-size:14px;color:#1e293b;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Sipariş Özeti</h3>
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr style="background:#f1f5f9">
+                  <th style="padding:8px 10px;text-align:left;font-size:12px;color:#64748b">Ürün</th>
+                  <th style="padding:8px 10px;text-align:center;font-size:12px;color:#64748b">Adet</th>
+                  <th style="padding:8px 10px;text-align:right;font-size:12px;color:#64748b">Tutar</th>
+                </tr>
+              </thead>
+              <tbody>${itemsHtml}</tbody>
+            </table>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0;text-align:right">
+              <span style="font-size:13px;color:#64748b">Toplam: </span>
+              <span style="font-size:18px;font-weight:800;color:#1e40af">₺${totalPrice?.toLocaleString('tr-TR')}</span>
+            </div>
+          </div>
+
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px 16px;margin-bottom:20px">
+            <p style="margin:0;font-size:13px;color:#065f46;line-height:1.6">
+              📞 Sorularınız için: <strong>+90 533 040 7227</strong><br/>
+              📧 E-posta: <strong>mobarbilisim@gmail.com</strong>
+            </p>
+          </div>
+
+          <p style="font-size:13px;color:#9ca3af;line-height:1.6;margin:0">
+            Bu e-posta, mobar.com.tr üzerinden verdiğiniz sipariş nedeniyle gönderilmiştir.
+            Sipariş vermediyseniz lütfen bizimle iletişime geçin.
+          </p>
+        </div>
+        <div style="background:#f8fafc;padding:16px 32px;text-align:center;border-top:1px solid #e5e7eb">
+          <p style="margin:0;font-size:12px;color:#94a3b8">© 2025 Mobar Bilişim — Gaziantep</p>
+        </div>
+      </div>`;
+
+      try {
+        await sendBrevoEmail(
+          customerEmail,
+          `✅ Siparişiniz Alındı — Sipariş #${orderId} | Mobar Bilişim`,
+          customerHtml
+        );
+      } catch (customerMailErr: any) {
+        // Müşteri maili başarısız olsa da sipariş alındı sayılır
+        console.warn("Müşteri onay maili gönderilemedi:", customerMailErr?.message);
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("Sipariş bildirimi hatası:", err.message);

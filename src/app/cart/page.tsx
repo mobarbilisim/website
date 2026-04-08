@@ -12,6 +12,7 @@ export default function CartPage() {
   const { items, removeFromCart, updateQuantity, totalPrice, totalItems, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [orderError, setOrderError] = useState("");
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -44,7 +45,7 @@ export default function CartPage() {
 
       if (error) throw error;
 
-      // Admin'e e-posta bildirimi gönder (arka planda, hata olsa da sipariş alındı sayılır)
+      // Admin + müşteri e-posta bildirimleri (arka planda, hata olsa da sipariş alındı sayılır)
       try {
         await fetch("/api/send-order-notification", {
           method: "POST",
@@ -63,6 +64,17 @@ export default function CartPage() {
         console.warn("Bildirim gönderilemedi (sipariş yine de alındı):", notifErr);
       }
 
+      // Stok otomatik düşürme (arka planda)
+      try {
+        await fetch("/api/decrement-stock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items }),
+        });
+      } catch (stockErr) {
+        console.warn("Stok güncellenemedi (sipariş yine de alındı):", stockErr);
+      }
+
       setSuccess(true);
       clearCart();
       setTimeout(() => {
@@ -70,7 +82,7 @@ export default function CartPage() {
       }, 5000);
 
     } catch (err: any) {
-      alert("Sipariş oluşturulurken bir hata oluştu: " + err.message);
+      setOrderError("Sipariş oluşturulurken bir hata oluştu: " + (err.message || "Bilinmeyen hata"));
     } finally {
       setLoading(false);
     }
@@ -195,12 +207,18 @@ export default function CartPage() {
                 <span className="text-blue-600">{totalPrice.toLocaleString('tr-TR')} ₺</span>
               </div>
               
-              <button 
-                type="submit" 
+              {orderError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-medium">
+                  ⚠️ {orderError}
+                </div>
+              )}
+
+              <button
+                type="submit"
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-75 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xl shadow-blue-500/20"
               >
-                {loading ? "Sipariş İşleniyor..." : "Siparişi Tamamla"} 
+                {loading ? "Sipariş İşleniyor..." : "Siparişi Tamamla"}
                 {!loading && <ArrowRight size={20} />}
               </button>
             </form>
