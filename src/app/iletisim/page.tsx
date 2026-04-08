@@ -6,15 +6,37 @@ import { useState } from "react";
 export default function IletisimPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simüle edilen gönderim işlemi
-    setTimeout(() => {
+    setError(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, subject, message }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Mesaj gönderilemedi. Lütfen tekrar deneyin.");
+      } else {
+        setIsSubmitted(true);
+      }
+    } catch {
+      setError("Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.");
+    } finally {
       setLoading(false);
-      setIsSubmitted(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -32,7 +54,7 @@ export default function IletisimPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Contact Info Cards */}
           <div className="lg:col-span-1 flex flex-col gap-6">
             <div className="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 flex items-start gap-4 hover:-translate-y-1 transition-transform">
@@ -42,9 +64,9 @@ export default function IletisimPage() {
               <div>
                 <h3 className="font-bold text-gray-900 mb-1 text-lg">Adresimiz</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  Mobar Bilişim Teknoloji A.Ş. <br />
-                  Cumhuriyet Mahallesi, Teknoloji Bulvarı No:42 <br />
-                  Silivri / İstanbul
+                  Mobar Bilişim Teknoloji <br />
+                  Dinç Can Plaza <br />
+                  Şehitkamil / Gaziantep
                 </p>
               </div>
             </div>
@@ -57,7 +79,7 @@ export default function IletisimPage() {
                 <h3 className="font-bold text-gray-900 mb-1 text-lg">Telefon</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
                   Hafta içi 09:00 - 18:00 arası arayabilirsiniz. <br />
-                  <a href="tel:+905321234567" className="font-bold text-emerald-600 mt-2 block hover:underline text-base">+90 532 123 45 67</a>
+                  <a href="tel:+905330407227" className="font-bold text-emerald-600 mt-2 block hover:underline text-base">+90 533 040 72 27</a>
                 </p>
               </div>
             </div>
@@ -74,7 +96,7 @@ export default function IletisimPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 flex items-start gap-4 hover:-translate-y-1 transition-transform">
               <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0">
                 <Clock size={24} />
@@ -100,28 +122,52 @@ export default function IletisimPage() {
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">Mesajınız Alındı!</h2>
                   <p className="text-gray-500 mb-8">Bize ulaştığınız için teşekkürler. Ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
-                  <button onClick={() => setIsSubmitted(false)} className="text-blue-600 font-bold hover:underline">Yeni bir mesaj gönder</button>
+                  <button
+                    onClick={() => { setIsSubmitted(false); setName(""); setEmail(""); setSubject(""); setMessage(""); }}
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    Yeni bir mesaj gönder
+                  </button>
                 </div>
               ) : (
                 <>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">Bize Mesaj Gönderin</h2>
-                  <p className="text-gray-500 mb-8">İstek, öneri veya şikayetlerinizi yan taraftaki form üzerinden bize anında ulaştırabilirsiniz.</p>
-                  
+                  <p className="text-gray-500 mb-8">İstek, öneri veya şikayetlerinizi aşağıdaki form üzerinden bize anında ulaştırabilirsiniz.</p>
+
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Adınız Soyadınız *</label>
-                        <input type="text" className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400" placeholder="Ahmet Yılmaz" required />
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400"
+                          placeholder="Ahmet Yılmaz"
+                          required
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">E-Posta Adresiniz *</label>
-                        <input type="email" className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400" placeholder="ornek@posta.com" required />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400"
+                          placeholder="ornek@posta.com"
+                          required
+                        />
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">Konu *</label>
-                      <select className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-700 cursor-pointer" required>
+                      <select
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-700 cursor-pointer"
+                        required
+                      >
                         <option value="">Lütfen Bir Konu Seçin</option>
                         <option value="Satis">Satış ve Bilgi Ekibi</option>
                         <option value="Teknik">Teknik Destek ve Servis</option>
@@ -129,12 +175,25 @@ export default function IletisimPage() {
                         <option value="Diger">Diğer / Öneri</option>
                       </select>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">Mesajınız *</label>
-                      <textarea rows={5} className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none placeholder:text-gray-400" placeholder="Size nasıl yardımcı olabiliriz?" required></textarea>
+                      <textarea
+                        rows={5}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none placeholder:text-gray-400"
+                        placeholder="Size nasıl yardımcı olabiliriz?"
+                        required
+                      />
                     </div>
-                    
+
+                    {error && (
+                      <p className="text-sm font-semibold text-red-600 bg-red-50 px-4 py-3 rounded-xl border border-red-100">
+                        {error}
+                      </p>
+                    )}
+
                     <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-blue-500/20 w-full md:w-auto ml-auto">
                       {loading ? "Gönderiliyor..." : (
                         <>
@@ -147,20 +206,19 @@ export default function IletisimPage() {
                 </>
               )}
             </div>
-            
+
             {/* Google Map Box */}
             <div className="bg-gray-200 rounded-3xl overflow-hidden h-80 relative shadow-inner">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m2!1m3!1m2!1s0x14caa7040068086b%3A0xe1ccfe98bc01b0d0!2z4bC44bC_4bCa4bCq4bCs4bCq4bCV4bCF!5e0!3m2!1str!2str!4v1614000000000!5m2!1str!2str" 
-                className="absolute inset-0 w-full h-full border-0" 
-                allowFullScreen={false} 
-                loading="lazy">
-              </iframe>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m2!1m3!1m2!1s0x14caa7040068086b%3A0xe1ccfe98bc01b0d0!2z4bC44bC_4bCa4bCq4bCs4bCq4bCV4bCF!5e0!3m2!1str!2str!4v1614000000000!5m2!1str!2str"
+                className="absolute inset-0 w-full h-full border-0"
+                allowFullScreen={false}
+                loading="lazy"
+              />
               <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg text-sm font-bold text-gray-800">
-                📍 Mobar Bilişim Merkez Ofis
+                📍 Mobar Bilişim — Şehitkamil / Gaziantep
               </div>
             </div>
-
           </div>
         </div>
       </div>

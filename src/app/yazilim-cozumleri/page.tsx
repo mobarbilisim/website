@@ -104,7 +104,7 @@ export default function YazilimCozumleriPage() {
               
               <div className="p-8 pt-0 mt-auto">
                 <Link 
-                  href={`https://wa.me/905330000000?text=Merhaba, ${pkg.name} detayları hakkında bilgi almak istiyorum.`} 
+                  href={`https://wa.me/905330407227?text=Merhaba, ${pkg.name} detayları hakkında bilgi almak istiyorum.`}
                   target="_blank"
                   className={`block w-full text-center py-4 rounded-xl font-bold text-white shadow-lg transition-transform hover:-translate-y-1 ${
                     pkg.isPopular 
@@ -124,7 +124,7 @@ export default function YazilimCozumleriPage() {
           <p className="text-gray-600 max-w-2xl mx-auto mb-8">
             Paketlerimizin dışında tamamen size özel bir web uygulaması, CRM, ERP veya mobil uygulama geliştirme talebiniz mi var? Size özel çözüm üretebilmemiz için projenizi dinlemek isteriz.
           </p>
-          <Link href="/contact" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-bold transition-colors">
+          <Link href="/iletisim" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-bold transition-colors">
             Özel Teklif Alın
           </Link>
         </div>

@@ -5,19 +5,19 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { User, Package, MapPin, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function HesabimPage() {
   const [user, setUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "orders" | "address">("profile");
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
-  
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
   // Profile Form States
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  
+
   const supabase = createClient();
   const router = useRouter();
 
@@ -29,23 +29,22 @@ export default function HesabimPage() {
         return;
       }
       setUser(session.user);
-      
+
       const { data: profile } = await supabase.from("users").select("*").eq("id", session.user.id).single();
-      
+
       setFullName(session.user.user_metadata?.full_name || "");
       if (profile) {
         setPhone(profile.phone || "");
         setAddress(profile.address || "");
       }
-      
+
       const { data: userOrders } = await supabase
         .from("orders")
         .select("*")
         .eq("customer_email", session.user.email)
         .order("created_at", { ascending: false });
-        
+
       setOrders(userOrders || []);
-      
       setLoading(false);
     };
     fetchUser();
@@ -54,20 +53,18 @@ export default function HesabimPage() {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    
-    // Auth metadata guncelleme
+
     await supabase.auth.updateUser({ data: { full_name: fullName } });
-    
-    // Kendi tablomuzda bir users tablosu acilariysa guncelle, hata olursa takilmasin.
-    await supabase.from("users").upsert({ 
-      id: user.id, 
-      full_name: fullName, 
-      phone, 
+    await supabase.from("users").upsert({
+      id: user.id,
+      full_name: fullName,
+      phone,
       address,
       email: user.email
     });
-    
-    alert("Profiliniz basariyla guncellendi!");
+
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   const handleLogout = async () => {
@@ -77,13 +74,13 @@ export default function HesabimPage() {
   };
 
   if (loading) {
-    return <div className="flex-1 flex justify-center items-center py-20 text-gray-500">Yukleniyor...</div>;
+    return <div className="flex-1 flex justify-center items-center py-20 text-gray-500">Yükleniyor...</div>;
   }
 
   return (
     <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
       <div className="flex flex-col lg:flex-row gap-8">
-        
+
         {/* Sidebar */}
         <div className="w-full lg:w-1/4">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -92,41 +89,41 @@ export default function HesabimPage() {
                 {fullName?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h2 className="font-bold text-gray-900 truncate max-w-[150px]">{fullName || "Musteri"}</h2>
+                <h2 className="font-bold text-gray-900 truncate max-w-[150px]">{fullName || "Müşteri"}</h2>
                 <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
               </div>
             </div>
 
             <nav className="space-y-2">
-              <button 
+              <button
                 onClick={() => setActiveTab("profile")}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${activeTab === 'profile' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <User size={18} /> Profil Bilgilerim
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab("address")}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${activeTab === 'address' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <MapPin size={18} /> Adres & Iletisim
+                <MapPin size={18} /> Adres & İletişim
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab("orders")}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${activeTab === 'orders' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                <Package size={18} /> Siparislerim
+                <Package size={18} /> Siparişlerim
               </button>
               <div className="h-px bg-gray-100 my-4"></div>
-              {user?.email === "mobarbilisim@gmail.com" && (
+              {user?.email === (process.env.NEXT_PUBLIC_ADMIN_EMAIL || "mobarbilisim@gmail.com") && (
                 <Link href="/admin" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-amber-600 hover:bg-amber-50 transition-colors">
-                  <Settings size={18} /> Yonetim Paneli
+                  <Settings size={18} /> Yönetim Paneli
                 </Link>
               )}
-              <button 
+              <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-red-600 hover:bg-red-50 transition-colors"
               >
-                <LogOut size={18} /> Cikis Yap
+                <LogOut size={18} /> Çıkış Yap
               </button>
             </nav>
           </div>
@@ -144,31 +141,41 @@ export default function HesabimPage() {
                     <input type="text" value={fullName} onChange={(e)=>setFullName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">E-Posta (Degistirilemez)</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">E-Posta (Değiştirilemez)</label>
                     <input type="email" value={user?.email || ""} disabled className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed outline-none" />
                   </div>
                   <button type="submit" className="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition mt-4 shadow-md shadow-blue-500/20">
-                    Guncelle
+                    Güncelle
                   </button>
+                  {saveSuccess && (
+                    <p className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
+                      ✓ Profiliniz başarıyla güncellendi.
+                    </p>
+                  )}
                 </form>
               </div>
             )}
 
             {activeTab === "address" && (
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Adres & Iletisim</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Adres & İletişim</h3>
                 <form onSubmit={handleUpdateProfile} className="max-w-xl space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Telefon Numarasi</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Telefon Numarası</label>
                     <input type="tel" value={phone} onChange={(e)=>setPhone(e.target.value)} placeholder="05XX XXX XX XX" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Acik Teslimat Adresi</label>
-                    <textarea rows={4} value={address} onChange={(e)=>setAddress(e.target.value)} placeholder="Mahalle, Sokak, No, Daire, Ilce, Il..." className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white resize-none" />
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Açık Teslimat Adresi</label>
+                    <textarea rows={4} value={address} onChange={(e)=>setAddress(e.target.value)} placeholder="Mahalle, Sokak, No, Daire, İlçe, İl..." className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white resize-none" />
                   </div>
                   <button type="submit" className="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition mt-4 shadow-md shadow-blue-500/20">
                     Adresi Kaydet
                   </button>
+                  {saveSuccess && (
+                    <p className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
+                      ✓ Adres bilgileriniz başarıyla güncellendi.
+                    </p>
+                  )}
                 </form>
               </div>
             )}
@@ -209,7 +216,7 @@ export default function HesabimPage() {
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="space-y-3">
                           <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sipariş Edilen Ürünler</h4>
                           {order.items?.map((item: any, i: number) => (
@@ -230,7 +237,7 @@ export default function HesabimPage() {
             )}
           </div>
         </div>
-        
+
       </div>
     </div>
   );

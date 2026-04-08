@@ -5,6 +5,14 @@ import { ArrowLeft, Calendar, FileText } from "lucide-react";
 
 export const revalidate = 60; // 60 saniyede bir önbelleği yenile
 
+// Script tag ve inline event handler temizleyici
+function sanitizeBlogHtml(html: string): string {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*')/gi, "")
+    .replace(/javascript\s*:/gi, "");
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const supabase = await createClient();
@@ -86,7 +94,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
           {/* Gerçek İçerik */}
           <div className="prose prose-blue prose-lg max-w-none text-gray-700 leading-relaxed"
-               dangerouslySetInnerHTML={{ __html: blog.content }}
+               dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(blog.content) }}
           >
           </div>
         </div>
