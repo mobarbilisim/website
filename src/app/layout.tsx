@@ -13,6 +13,7 @@ import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import { Toaster } from 'react-hot-toast';
 import { createClient } from "@/lib/supabase/server";
 import IdleTimeout from "@/components/providers/IdleTimeout";
+import CookieBanner from "@/components/ui/CookieBanner";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -63,6 +64,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             </IdleTimeout>
           </FavoriteProvider>
         </CartProvider>
+        <CookieBanner />
 
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GA_ID && (

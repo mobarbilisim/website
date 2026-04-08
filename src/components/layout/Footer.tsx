@@ -54,6 +54,7 @@ export default async function Footer() {
               <li><Link href="/sayfalar/banka-hesaplarimiz" className="text-gray-400 hover:text-white transition-colors">Banka Hesaplarımız</Link></li>
               <li><Link href="/sayfalar/mesafeli-satis-sozlesmesi" className="text-gray-400 hover:text-white transition-colors">Mesafeli Satış Sözleşmesi</Link></li>
               <li><Link href="/sayfalar/iade-sartlari" className="text-gray-400 hover:text-white transition-colors">İade ve İptal Şartları</Link></li>
+              <li><Link href="/kvkk" className="text-gray-400 hover:text-white transition-colors">KVKK Aydınlatma Metni</Link></li>
             </ul>
           </div>
 
