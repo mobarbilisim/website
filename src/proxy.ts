@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
@@ -17,16 +17,14 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          // Güncellenen çerezleri isteklere uyguluyoruz
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value);
           });
-          
+
           supabaseResponse = NextResponse.next({
             request,
           });
 
-          // Güncellenen çerezleri yanıt nesnesine de uyguluyoruz
           cookiesToSet.forEach(({ name, value, options }) => {
             supabaseResponse.cookies.set(name, value, options);
           });
@@ -35,7 +33,7 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Oturum açmış bir kullanıcı var mı kontrol et
+  // Oturum kontrolü
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -43,12 +41,12 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = request.nextUrl.pathname.startsWith('/admin/login');
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin') && !isAuthPage;
 
-  // Sadece admin sayfaları için koruma: Kullanıcı yoksa login'e at
+  // Admin sayfaları: giriş yoksa login'e yönlendir
   if (isAdminPage && !user) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
 
-  // Eğer kullanıcı zaten giriş yapmışsa ve login sayfasına girmeye çalışıyorsa admin anasayfaya yönlendir
+  // Zaten giriş yapmış biri login'e gelirse admin'e yönlendir
   if (isAuthPage && user) {
     return NextResponse.redirect(new URL('/admin', request.url));
   }
@@ -56,10 +54,8 @@ export async function middleware(request: NextRequest) {
   return supabaseResponse;
 }
 
-// Hangi yollarda bu middleware'in çalışacağını belirliyoruz
 export const config = {
   matcher: [
-    // Next.js statik dosyalarını ve resimleri es geç
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
