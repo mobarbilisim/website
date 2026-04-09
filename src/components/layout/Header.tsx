@@ -69,7 +69,7 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
     <header className="w-full bg-white z-50">
       {/* Top Header */}
       <div className="border-b border-gray-100">
-        <div className="max-w-[1400px] w-[97%] mx-auto py-3 md:py-4">
+        <div className="max-w-[1400px] w-[97%] mx-auto py-1 md:py-1.5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
 
             <div className="w-full md:w-auto flex items-center justify-between">
@@ -77,9 +77,9 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
                 <Image
                   src="/logo.png"
                   alt="Mobar Bilişim Logo"
-                  width={600}
-                  height={120}
-                  className="h-[120px] w-auto object-contain"
+                  width={700}
+                  height={160}
+                  className="h-[160px] w-auto object-contain"
                   priority
                 />
               </Link>
