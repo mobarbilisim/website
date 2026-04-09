@@ -90,7 +90,7 @@ export default function CartPage() {
 
   if (success) {
     return (
-      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
+      <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
         <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
           <CheckCircle2 size={50} />
         </div>
@@ -108,7 +108,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
+      <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
         <div className="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-6">
           <ShoppingCart size={40} />
         </div>
@@ -124,7 +124,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    <div className="max-w-[1400px] w-[97%] mx-auto py-12 w-full">
       <h1 className="text-3xl font-extrabold mb-8 text-gray-900">Sepetiniz ({totalItems} Ürün)</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">

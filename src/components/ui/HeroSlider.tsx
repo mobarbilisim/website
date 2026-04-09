@@ -39,7 +39,7 @@ export default function HeroSlider({ initialSlides }: { initialSlides: any[] }) 
   const Icon2 = getIcon(activeSlide.Icon2 || "Monitor");
 
   return (
-    <section className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8">
+    <section className="w-full max-w-[1400px] w-[97%] mx-auto mt-4 md:mt-8">
       <div
         onClick={(e) => {
           const target = e.target as HTMLElement;

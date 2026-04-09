@@ -69,17 +69,17 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
     <header className="w-full bg-white z-50">
       {/* Top Header */}
       <div className="border-b border-gray-100">
-        <div className="max-w-[1700px] mx-auto px-3 sm:px-5 lg:px-8 py-4 md:py-5">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
-            
+        <div className="max-w-[1400px] w-[97%] mx-auto py-3 md:py-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+
             <div className="w-full md:w-auto flex items-center justify-between">
               <Link href="/" className="flex-shrink-0">
                 <Image
                   src="/logo.png"
                   alt="Mobar Bilişim Logo"
-                  width={520}
-                  height={130}
-                  className="h-24 md:h-32 w-auto object-contain"
+                  width={514}
+                  height={88}
+                  className="h-[88px] w-auto object-contain"
                   priority
                 />
               </Link>
@@ -99,17 +99,17 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
               </div>
             </div>
 
-            {/* Desktop Search Bar - Emerald Theme */}
-            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-3xl relative group">
-              <input 
-                type="text" 
+            {/* Desktop Search Bar */}
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl relative group">
+              <input
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Aramak istediğin ürünü yaz, kolayca bul!" 
-                className="w-full pl-5 pr-14 py-3 rounded-xl border-[2.5px] border-blue-500 focus:outline-none transition-shadow group-hover:shadow-md md:group-hover:shadow-blue-500/10 text-sm font-semibold text-gray-700"
+                placeholder="Aramak istediğin ürünü yaz, kolayca bul!"
+                className="w-full pl-5 pr-14 py-2.5 rounded-lg border-2 border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all text-sm font-semibold text-gray-700"
               />
-              <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 bg-blue-500 text-white rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
-                <Search size={20} />
+              <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 bg-blue-500 text-white rounded-lg flex items-center justify-center hover:bg-blue-600 transition">
+                <Search size={18} />
               </button>
             </form>
 
@@ -191,7 +191,7 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
       {/* Category Icons Bar (Desktop) */}
       {categories.length > 0 && (
          <div className="hidden md:block bg-white shadow-sm border-b border-gray-100 relative">
-            <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1400px] w-[97%] mx-auto">
                <ul className="flex flex-wrap items-center justify-center gap-x-10 lg:gap-x-14 gap-y-4 py-4">
                   {categories.filter((c: any) => !c.parent_id).map((cat, idx) => {
                      const subCats = categories.filter((c: any) => c.parent_id === cat.id);

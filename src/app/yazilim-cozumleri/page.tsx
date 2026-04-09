@@ -63,7 +63,7 @@ export default function YazilimCozumleriPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen py-16">
-      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] w-[97%] mx-auto">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Web Sitesi Paketleri</h1>
           <p className="text-xl text-gray-500 max-w-3xl mx-auto">

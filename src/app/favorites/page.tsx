@@ -11,7 +11,7 @@ export default function FavoritesPage() {
 
   if (favorites.length === 0) {
     return (
-      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center justify-center text-center">
+      <div className="flex-1 w-full max-w-[1400px] w-[97%] mx-auto py-20 flex flex-col items-center justify-center text-center">
         <div className="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6">
           <Heart size={40} className="fill-red-100" />
         </div>
@@ -27,7 +27,7 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    <div className="max-w-[1400px] w-[97%] mx-auto py-12 w-full">
       <div className="flex items-center gap-3 mb-8">
         <Heart className="text-red-500 fill-red-100" size={32} />
         <h1 className="text-3xl font-extrabold text-gray-900">Favorilerim ({favorites.length})</h1>

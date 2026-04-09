@@ -44,7 +44,7 @@ export default function IletisimPage() {
       {/* Hero Banner */}
       <div className="bg-blue-600 text-white py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')] opacity-10 bg-cover bg-center"></div>
-        <div className="relative z-10 max-w-[1700px] mx-auto text-center">
+        <div className="relative z-10 max-w-[1400px] mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Bize Ulaşın</h1>
           <p className="text-blue-100 text-lg max-w-2xl mx-auto">
             Teknolojik ihtiyaçlarınız ve projeleriniz için her zaman yanınızdayız. Ekibimiz en kısa sürede sorularınızı yanıtlamaktan memnuniyet duyacaktır.
@@ -52,7 +52,7 @@ export default function IletisimPage() {
         </div>
       </div>
 
-      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20">
+      <div className="max-w-[1400px] w-[97%] mx-auto py-16 -mt-10 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           {/* Contact Info Cards */}
