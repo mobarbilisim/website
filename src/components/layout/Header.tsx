@@ -69,17 +69,17 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
     <header className="w-full bg-white z-50">
       {/* Top Header */}
       <div className="border-b border-gray-100">
-        <div className="max-w-[1400px] w-[97%] mx-auto py-1 md:py-1.5">
+        <div className="max-w-[1400px] w-[97%] mx-auto py-0">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
 
             <div className="w-full md:w-auto flex items-center justify-between">
               <Link href="/" className="flex-shrink-0">
                 <Image
-                  src="/logo.png"
+                  src="/mobaryenilogo.png"
                   alt="Mobar Bilişim Logo"
                   width={700}
                   height={160}
-                  className="h-[160px] w-auto object-contain"
+                  className="h-[110px] w-auto object-contain"
                   priority
                 />
               </Link>
