@@ -192,21 +192,21 @@ export default function Header({ categories = [] }: { categories?: any[] }) {
       {categories.length > 0 && (
          <div className="hidden md:block bg-white shadow-sm border-b border-gray-100 relative">
             <div className="max-w-[1400px] w-[97%] mx-auto">
-               <ul className="flex flex-wrap items-center justify-evenly gap-y-3 py-3">
+               <ul className="flex flex-wrap items-center justify-evenly gap-y-1 py-1.5">
                   {categories.filter((c: any) => !c.parent_id).map((cat, idx) => {
                      const subCats = categories.filter((c: any) => c.parent_id === cat.id);
                      const RenderIcon = iconMap[cat.icon] || Monitor;
                      return (
-                       <li key={cat.id || idx} className="group cursor-pointer relative px-4">
-                         <Link href={`/category/${cat.slug}`} className="flex flex-col items-center gap-1.5 group-hover:-translate-y-1 transition-transform duration-300">
-                            <div className="w-14 h-14 flex items-center justify-center pointer-events-none">
+                       <li key={cat.id || idx} className="group cursor-pointer relative px-3">
+                         <Link href={`/category/${cat.slug}`} className="flex flex-col items-center gap-1 group-hover:-translate-y-0.5 transition-transform duration-300">
+                            <div className="w-11 h-11 flex items-center justify-center pointer-events-none">
                               {cat.image_url ? (
                                  <img src={cat.image_url} alt={cat.name} className="w-full h-full object-contain drop-shadow-sm" />
                               ) : (
-                                 <RenderIcon size={38} strokeWidth={1.5} className="text-gray-700 group-hover:text-blue-500 transition-colors drop-shadow-sm" />
+                                 <RenderIcon size={30} strokeWidth={1.5} className="text-gray-700 group-hover:text-blue-500 transition-colors drop-shadow-sm" />
                               )}
                             </div>
-                            <span className="text-[13px] font-bold text-gray-700 group-hover:text-blue-500 transition-colors text-center w-max max-w-[120px] leading-tight flex-shrink-0">
+                            <span className="text-[12px] font-bold text-gray-700 group-hover:text-blue-500 transition-colors text-center w-max max-w-[110px] leading-tight flex-shrink-0">
                               {cat.name}
                             </span>
                          </Link>
